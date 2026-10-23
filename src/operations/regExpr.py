@@ -13,7 +13,6 @@
 # GNU General Public License for more details.
 
 import re
-import sre_constants
 
 import wx
 
@@ -54,14 +53,14 @@ class Panel(wx.Panel):
         self.iRegExpr = wx.CheckBox(id=wxID_PANELREG_EXP_I, label=_(u"case sensitive"),
                                     name=u'iRegExpr', parent=self)
         self.iRegExpr.SetValue(False)
-        self.iRegExpr.SetToolTipString(_(u"Differentiate between upper and lower case"))
+        self.iRegExpr.SetToolTip(_(u"Differentiate between upper and lower case"))
         self.iRegExpr.Enable(False)
         self.iRegExpr.Bind(wx.EVT_CHECKBOX, prnt.define_regex)
 
         self.uRegExpr = wx.CheckBox(id=wxID_PANELREG_EXP_U, label=_(u"Unicode"),
                                     name=u'uRegExpr', parent=self)
         self.uRegExpr.SetValue(True)
-        self.uRegExpr.SetToolTipString(_(r"Unicode match (\w matches 'a','b','c', etc)"))
+        self.uRegExpr.SetToolTip(_(r"Unicode match (\w matches 'a','b','c', etc)"))
         self.uRegExpr.Enable(False)
         self.uRegExpr.Bind(wx.EVT_CHECKBOX, prnt.define_regex)
 
@@ -71,13 +70,13 @@ class Panel(wx.Panel):
 
         self.aToZ = wx.Button(id=wxID_PANELA_Z, label=_(u"[a-z]"), name=u'aToZ',
                               parent=self, style=wx.BU_EXACTFIT)
-        self.aToZ.SetToolTipString(_(u"All alphabetical characters"))
+        self.aToZ.SetToolTip(_(u"All alphabetical characters"))
         self.aToZ.Enable(False)
         self.aToZ.Bind(wx.EVT_BUTTON, self._add_regex_buttons)
 
         self.digit = wx.Button(id=wxID_PANELDIGIT, label=_(u"[0-9]"),
                                name=u'digit', parent=self, style=wx.BU_EXACTFIT)
-        self.digit.SetToolTipString(_(u"All number characters"))
+        self.digit.SetToolTip(_(u"All number characters"))
         self.digit.Enable(False)
         self.digit.Bind(wx.EVT_BUTTON, self._add_regex_buttons)
 
@@ -127,7 +126,7 @@ class Panel(wx.Panel):
                 mod = re.compile(REfind, re.UNICODE)
             else:
                 mod = re.compile(REfind)
-        except sre_constants.error as err:
+        except re.error as err:
             mod = re.compile(r'')
 
             # give user a descriptive error message

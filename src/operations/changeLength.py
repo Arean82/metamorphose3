@@ -65,7 +65,7 @@ class OpPanel(Operation):
                                      64), size=wx.Size(50, -1), value='64',
                                      style=wx.SP_ARROW_KEYS | wx.TE_PROCESS_ENTER)
         self.modLength.SetValue(64)
-        self.modLength.SetToolTipString(_(u"Length after modification"))
+        self.modLength.SetToolTip(_(u"Length after modification"))
         self.modLength.Bind(wx.EVT_TEXT_ENTER, main.show_preview,
                             id=wxID_MAINPANELMOD_LENGTH)
         self.modLength.Bind(wx.EVT_SPINCTRL, main.show_preview,
@@ -108,7 +108,7 @@ class OpPanel(Operation):
                                                style=wx.SP_ARROW_KEYS | wx.TE_PROCESS_ENTER)
         self.mod_length_position.SetValue(0)
         self.mod_length_position.Enable(False)
-        self.mod_length_position.SetToolTipString(_(u"(0 = first character)"))
+        self.mod_length_position.SetToolTip(_(u"(0 = first character)"))
         self.mod_length_position.Bind(wx.EVT_TEXT_ENTER, main.show_preview,
                                       id=wxID_PANELMOD_LENGTH_POSITION)
         self.mod_length_position.Bind(wx.EVT_SPINCTRL, main.show_preview,

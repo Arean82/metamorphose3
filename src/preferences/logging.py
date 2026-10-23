@@ -27,28 +27,28 @@ class Panel(wx.Panel):
     Logging preferences panel
     """
     def __init_itemsizer_items(self, parent):
-        parent.AddSpacer(wx.Size(8, 8), border=0, flag=0)
-        parent.AddWindow(self.staticText5, 0, border=5, flag=wx.ALL)
-        parent.AddSpacer(wx.Size(8, 8), border=0, flag=0)
-        parent.AddWindow(self.staticText1, 0, border=5, flag=wx.ALL)
-        #parent.AddSizer(self.dirBrowse, 0, border=3, flag=wx.BOTTOM|wx.RIGHT|wx.EXPAND)
-        parent.AddWindow(self.logLocation, 0, border=10,
+        parent.Add(wx.Size(8, 8), border=0, flag=0)
+        parent.Add(self.staticText5, 0, border=5, flag=wx.ALL)
+        parent.Add(wx.Size(8, 8), border=0, flag=0)
+        parent.Add(self.staticText1, 0, border=5, flag=wx.ALL)
+        #parent.Add(self.dirBrowse, 0, border=3, flag=wx.BOTTOM|wx.RIGHT|wx.EXPAND)
+        parent.Add(self.logLocation, 0, border=10,
                          flag=wx.ALIGN_CENTER | wx.RIGHT | wx.LEFT | wx.EXPAND)
-        parent.AddSpacer(wx.Size(8, 8), border=0, flag=0)
-        parent.AddSizer(self.logOptionsSizer, 0, border=20,
+        parent.Add(wx.Size(8, 8), border=0, flag=0)
+        parent.Add(self.logOptionsSizer, 0, border=20,
                         flag=wx.ALIGN_CENTER_VERTICAL | wx.LEFT)
-        parent.AddSpacer(wx.Size(5, 5), border=0, flag=0)
+        parent.Add(wx.Size(5, 5), border=0, flag=0)
 
     def __init_logoptions_sizer(self, parent):
-        parent.AddWindow(self.staticText2, 0, border=10,
+        parent.Add(self.staticText2, 0, border=10,
                          flag=wx.RIGHT | wx.ALIGN_CENTER_VERTICAL)
-        parent.AddWindow(self.logSeparator, 0, border=0, flag=0)
-        parent.AddWindow(self.staticText3, 0, border=0,
+        parent.Add(self.logSeparator, 0, border=0, flag=0)
+        parent.Add(self.staticText3, 0, border=0,
                          flag=wx.ALIGN_CENTER_VERTICAL)
-        parent.AddWindow(self.logEnclose, 0, border=0, flag=0)
-        parent.AddWindow(self.staticText4, 0, border=0,
+        parent.Add(self.logEnclose, 0, border=0, flag=0)
+        parent.Add(self.staticText4, 0, border=0,
                          flag=wx.ALIGN_CENTER_VERTICAL)
-        parent.AddWindow(self.logFextension, 0, border=0, flag=0)
+        parent.Add(self.logFextension, 0, border=0, flag=0)
 
     def __init_sizers(self):
         self.logOptionsSizer = wx.FlexGridSizer(cols=2, hgap=0, rows=3, vgap=3)
@@ -56,7 +56,7 @@ class Panel(wx.Panel):
         self.itemSizer = wx.BoxSizer(orient=wx.VERTICAL)
         self.__init_itemsizer_items(self.itemSizer)
         self.mainSizer = wx.BoxSizer(orient=wx.VERTICAL)
-        self.mainSizer.AddSizer(self.itemSizer, 1, border=10,
+        self.mainSizer.Add(self.itemSizer, 1, border=10,
                                 flag=wx.ALIGN_CENTER_HORIZONTAL | wx.ALL | wx.EXPAND)
         self.SetSizer(self.mainSizer)
 

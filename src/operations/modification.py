@@ -18,11 +18,11 @@ Panel to hold change case widgets and operations.
 Uses search panel.
 """
 
-import sre_constants
 
 from . import accentStrip
 from .operation import Operation
 from . import search
+import re
 import utils
 import wx
 
@@ -297,7 +297,7 @@ class OpPanel(Operation):
         if isRegExp:
             try:
                 newName = searchValues[2].sub(self.comds[self.op], newName)
-            except (sre_constants.error, AttributeError) as err:
+            except (re.error, AttributeError) as err:
                 main.set_status_msg(_(u"Regular-Expression: %s") % err, u'warn')
                 # so we know not to change status text after RE error msg:
                 app.REmsg = True

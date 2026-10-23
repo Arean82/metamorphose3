@@ -23,23 +23,23 @@ import wx
 
 class Panel(wx.Panel):
     def __init_itemsizer_items(self, parent):
-        parent.AddSpacer(wx.Size(8, 15), border=0, flag=0)
-        parent.AddWindow(self.clearUndo, 0, border=15, flag=wx.LEFT)
-        parent.AddSpacer(wx.Size(8, 15), border=0, flag=0)
-        parent.AddWindow(self.useDirTree, 0, border=15, flag=wx.LEFT)
-        parent.AddSpacer(wx.Size(5, 5), border=10, flag=0)
-        parent.AddWindow(self.showHiddenDirs, 0, border=25, flag=wx.LEFT)
-        parent.AddSpacer(wx.Size(-1, 20), border=0, flag=0)
-        parent.AddSizer(self.encodingSizer, 0, border=15, flag=wx.LEFT)
-        parent.AddSpacer(wx.Size(8, 35), border=0, flag=0)
+        parent.Add(wx.Size(8, 15), border=0, flag=0)
+        parent.Add(self.clearUndo, 0, border=15, flag=wx.LEFT)
+        parent.Add(wx.Size(8, 15), border=0, flag=0)
+        parent.Add(self.useDirTree, 0, border=15, flag=wx.LEFT)
+        parent.Add(wx.Size(5, 5), border=10, flag=0)
+        parent.Add(self.showHiddenDirs, 0, border=25, flag=wx.LEFT)
+        parent.Add(wx.Size(-1, 20), border=0, flag=0)
+        parent.Add(self.encodingSizer, 0, border=15, flag=wx.LEFT)
+        parent.Add(wx.Size(8, 35), border=0, flag=0)
 
     def _init_encodingsizer(self, parent):
-        parent.AddSpacer(wx.Size(8, 8), border=0, flag=0)
-        parent.AddWindow(self.staticText1, 0, border=5, flag=wx.ALL)
-        parent.AddWindow(self.encodingGroup, 0, border=5, flag=wx.LEFT | wx.RIGHT)
-        parent.AddSpacer(wx.Size(-1, 15), border=0, flag=wx.LEFT)
-        parent.AddWindow(self.staticText2, 0, border=5, flag=wx.ALL)
-        parent.AddWindow(self.encodingSelect, 0, border=5,
+        parent.Add(wx.Size(8, 8), border=0, flag=0)
+        parent.Add(self.staticText1, 0, border=5, flag=wx.ALL)
+        parent.Add(self.encodingGroup, 0, border=5, flag=wx.LEFT | wx.RIGHT)
+        parent.Add(wx.Size(-1, 15), border=0, flag=wx.LEFT)
+        parent.Add(self.staticText2, 0, border=5, flag=wx.ALL)
+        parent.Add(self.encodingSelect, 0, border=5,
                          flag=wx.BOTTOM | wx.LEFT | wx.RIGHT)
 
     def __init_sizers(self):
@@ -50,7 +50,7 @@ class Panel(wx.Panel):
         self.__init_itemsizer_items(self.itemSizer)
 
         self.mainSizer = wx.BoxSizer(orient=wx.VERTICAL)
-        self.mainSizer.AddSizer(self.itemSizer, 0, border=10,
+        self.mainSizer.Add(self.itemSizer, 0, border=10,
                                 flag=wx.ALIGN_CENTER_HORIZONTAL | wx.ALL)
         self.SetSizer(self.mainSizer)
 
@@ -110,7 +110,7 @@ class Panel(wx.Panel):
         self.encodingSelect = wx.ComboBox(choices=choicesList,
                                           id=wxID_PANELENCODINGSELECT, name=u'encodingSelect', parent=self,
                                           style=wx.CB_READONLY)
-        self.encodingSizer.AddWindow(self.encodingSelect, 0, border=5,
+        self.encodingSizer.Add(self.encodingSelect, 0, border=5,
                                      flag=wx.BOTTOM | wx.LEFT | wx.RIGHT | wx.EXPAND)
         self.Layout()
 

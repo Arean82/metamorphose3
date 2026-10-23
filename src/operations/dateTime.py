@@ -115,7 +115,7 @@ class Panel(wx.Panel):
                                        _(u"YY"), _(u"YYYY")], id=wxID_PANELDATE_FORMAT,
                                        name=u'date_format', parent=self, style=0, value='')
         self.date_format.SetSelection(0)
-        self.date_format.SetToolTipString(_(u"Use menu or enter text"))
+        self.date_format.SetToolTip(_(u"Use menu or enter text"))
         self.date_format.Bind(wx.EVT_TEXT, self._test_date,
                               id=wxID_PANELDATE_FORMAT)
 
@@ -124,7 +124,7 @@ class Panel(wx.Panel):
                                        _(u"HHhMMmSSs"), _(u"24HHhMMmSSs"), ], id=wxID_PANELTIME_FORMAT,
                                        name=u'time_format', parent=self, style=0)
         self.time_format.SetSelection(2)
-        self.time_format.SetToolTipString(_(u"Use menu or enter text"))
+        self.time_format.SetToolTip(_(u"Use menu or enter text"))
         self.time_format.Bind(wx.EVT_TEXT, self._test_time,
                               id=wxID_PANELTIME_FORMAT)
 
@@ -166,12 +166,12 @@ class Panel(wx.Panel):
 
         self.spin1 = wx.SpinButton(id=wxID_PANELSPIN1, name=u'spin1',
                                    parent=self, style=wx.SP_VERTICAL)
-        self.spin1.SetToolTipString(_(u"Adjust Time"))
+        self.spin1.SetToolTip(_(u"Adjust Time"))
         self.spin1.Bind(wx.EVT_SPIN, self._test_time, id=wxID_PANELSPIN1)
 
         self.time = wx.lib.masked.timectrl.TimeCtrl(display_seconds=True,
                                                     fmt24hr=False, id=wxID_PANELTIME, name=u'time',
-                                                    oob_color=wx.NamedColour(u'Yellow'), parent=self,
+                                                    oob_color=wx.Colour(u'Yellow'), parent=self,
                                                     spinButton=self.spin1, style=wx.TE_PROCESS_TAB,
                                                     useFixedWidthFont=True, value=wx.DateTime.Now())
 

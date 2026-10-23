@@ -82,7 +82,7 @@ class LangSelect(wx.Dialog):
             lang = lang_info[0]
             setattr(self, lang, wx.RadioButton(id=-1, label=lang_info[1],
                     name=lang, parent=self, style=0))
-            getattr(self, lang).SetToolTipString(u"%s (%s)" % (lang_info[1], lang))
+            getattr(self, lang).SetToolTip(u"%s (%s)" % (lang_info[1], lang))
             setattr(self, '%s_flag' % lang, wx.StaticBitmap(parent=self, id=-1,
                     bitmap=getBitmap(lang_info[2])))
 

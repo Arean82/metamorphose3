@@ -29,26 +29,26 @@ class Panel(wx.Panel):
         self.itemSizer = wx.BoxSizer(orient=wx.VERTICAL)
         self.__init_itemsizer_items(self.itemSizer)
         self.mainSizer = wx.BoxSizer(orient=wx.VERTICAL)
-        self.mainSizer.AddSizer(self.itemSizer, 0, border=10,
+        self.mainSizer.Add(self.itemSizer, 0, border=10,
                                 flag=wx.ALIGN_CENTER_HORIZONTAL | wx.ALL)
         self.SetSizer(self.mainSizer)
 
     def __init_itemsizer_items(self, parent):
-        parent.AddSpacer(wx.Size(8, 8), border=0, flag=0)
-        parent.AddWindow(self.useWinChars, 0, border=15, flag=wx.LEFT)
-        parent.AddSpacer(wx.Size(8, 4), border=0, flag=0)
-        parent.AddWindow(self.markWarning, 0, border=38, flag=wx.LEFT)
-        parent.AddSpacer(wx.Size(8, 8), border=0, flag=0)
-        parent.AddWindow(self.markBadChars, 0, border=38, flag=wx.LEFT)
-        parent.AddSpacer(wx.Size(8, 8), border=0, flag=0)
-        parent.AddWindow(self.deleteBadChars, 0, border=38, flag=wx.LEFT)
-        parent.AddSpacer(wx.Size(8, 16), border=0, flag=0)
-        parent.AddWindow(self.useWinNames, 0, border=15, flag=wx.LEFT)
-        parent.AddSpacer(wx.Size(8, 4), border=0, flag=0)
-        parent.AddWindow(self.winNamesWarn, 0, border=38, flag=wx.LEFT)
-        parent.AddSpacer(wx.Size(8, 8), border=0, flag=0)
-        parent.AddWindow(self.winNamesBad, 0, border=38, flag=wx.LEFT)
-        parent.AddSpacer(wx.Size(8, 16), border=0, flag=0)
+        parent.Add(wx.Size(8, 8), border=0, flag=0)
+        parent.Add(self.useWinChars, 0, border=15, flag=wx.LEFT)
+        parent.Add(wx.Size(8, 4), border=0, flag=0)
+        parent.Add(self.markWarning, 0, border=38, flag=wx.LEFT)
+        parent.Add(wx.Size(8, 8), border=0, flag=0)
+        parent.Add(self.markBadChars, 0, border=38, flag=wx.LEFT)
+        parent.Add(wx.Size(8, 8), border=0, flag=0)
+        parent.Add(self.deleteBadChars, 0, border=38, flag=wx.LEFT)
+        parent.Add(wx.Size(8, 16), border=0, flag=0)
+        parent.Add(self.useWinNames, 0, border=15, flag=wx.LEFT)
+        parent.Add(wx.Size(8, 4), border=0, flag=0)
+        parent.Add(self.winNamesWarn, 0, border=38, flag=wx.LEFT)
+        parent.Add(wx.Size(8, 8), border=0, flag=0)
+        parent.Add(self.winNamesBad, 0, border=38, flag=wx.LEFT)
+        parent.Add(wx.Size(8, 16), border=0, flag=0)
 
     def __init_ctrls(self, prnt):
         wx.Panel.__init__(self, id=wxID_PANEL, name=u'ErrorCheck', parent=prnt,

@@ -18,7 +18,6 @@ on file content (images, music).
 """
 
 import os
-import re
 import sys
 
 import app
@@ -108,7 +107,7 @@ class Core():
             # return the number in the name
             def _get_numb(x):
                 try:
-                    compare = float(re.sub(r'\D', '', x[0]))
+                    compare = float(''.join(ch for ch in x[0] if ch.isdigit()))
                 except ValueError:
                     compare = x[0]
                 return compare

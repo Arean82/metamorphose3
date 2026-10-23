@@ -84,7 +84,7 @@ class About(wx.Dialog):
         self.CLOSE = wx.BitmapButton(id=wxID_ABOUTCLOSE,
                                      bitmap=wx.Bitmap(utils.icon_path(u'metamorphose128.png'), wx.BITMAP_TYPE_PNG),
                                      name=u'CLOSE', parent=self, style=wx.BU_AUTODRAW)
-        self.CLOSE.SetToolTipString(_(u"Click here to exit"))
+        self.CLOSE.SetToolTip(_(u"Click here to exit"))
         self.CLOSE.Bind(wx.EVT_BUTTON, self.on_close_button, id=wxID_ABOUTCLOSE)
 
         self.copyright = wx.StaticText(id=wxID_ABOUTCOPYRIGHT,

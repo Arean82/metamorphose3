@@ -63,7 +63,7 @@ def get_real_path(path):
 
 def locale_path(lang):
     """Return locale directory."""
-    # windows py2exe
+    # frozen Windows build
     if hasattr(sys, "frozen"):
         return get_real_path(u'messages')
     # Linux, freeBSD when installed

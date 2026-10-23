@@ -2,6 +2,34 @@
 Métamorphose3 Changelog
 ***********************
 
+3.0.0
+=====
+**2026-10-23**
+
+Python 3 release.
+
+This release moves the application to Python 3. Settings and undo logs
+from earlier versions are not read; user data now lives in
+``.metamorphose3``.
+
+Fixes/Changes:
+  - Require Python 3.12 or greater
+  - Port to wxPython Phoenix (4.2+), removing the ``wxversion`` bootstrap
+  - Replace ``wx.calendar`` and ``wx.lib.hyperlink`` with their ``wx.adv`` equivalents
+  - Replace ``wx.NewId()`` with ``wx.NewIdRef()`` and update font, dialog and
+    event-binding APIs to their Phoenix equivalents
+  - Replace deprecated ``codecs.open()`` with ``open(..., encoding=...)``
+  - Use explicit package-relative imports throughout
+  - Drop legacy string and filesystem encoding workarounds
+  - Replace the bundled mutagen (1.28) with upstream mutagen 1.45+
+  - Replace the exif-py submodule with upstream exifread 3.0+
+  - Replace the Python Imaging Library import with Pillow
+  - Update the launchers, Makefile, Debian metadata and NSIS script for Python 3
+
+Additions:
+  - Version reported as 3.0.0
+
+
 2.0.8.4 beta
 ============
 **2015-08-11**
@@ -282,7 +310,7 @@ Additions:
       All operation parameters can be saved to configuration files, all settings can be loaded.
   - Preferences: change renaming refresh rate
   - Preferences: split 'automation' and 'logging' panels.
-  - Windows binary compiled under python 2.5.2, wxPython 2.8.7.1
+  - Windows binary provided for this release
   - Installer adds GdiPlus.dll for Windows 2000.
 
 

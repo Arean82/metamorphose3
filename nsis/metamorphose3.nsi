@@ -1,6 +1,10 @@
 ;Based on :
 ;Welcome/Finish Page Example Script
 ;Written by Joost Verburg
+;
+; NOTE: this script only wraps an already-frozen Windows build found in
+;_win_bin. The payload must be produced with a Python 3 freezer
+;(PyInstaller or equivalent).
 
 ;--------------------------------
 ;Include Modern UI

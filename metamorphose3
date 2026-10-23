@@ -8,7 +8,7 @@ if [ -x /bin/rpm ]
 then
   MAIN=`rpm -ql metamorphose3|grep metamorphose3.py`
   if [ -f "$MAIN" ];then
-    exec python $MAIN "$@"
+    exec python3 $MAIN "$@"
     exit
   fi
 fi
@@ -17,7 +17,7 @@ fi
 #run
 if [ -d "$PREFIX/share/metamorphose3" ]
 then
-  exec python $PREFIX/share/metamorphose3/metamorphose3.py "$@"
+  exec python3 $PREFIX/share/metamorphose3/metamorphose3.py "$@"
 else
-  exec python src/metamorphose3.py "$@"
+  exec python3 src/metamorphose3.py "$@"
 fi

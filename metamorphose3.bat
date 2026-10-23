@@ -1,1 +1,2 @@
-"C:\python26\python.exe" "src\metamorphose3.py"
+@echo off
+py -3 "%~dp0src\metamorphose3.py" %*

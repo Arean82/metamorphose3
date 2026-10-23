@@ -20,7 +20,6 @@ Supports direct selection, regular expression filters, and attribute filters.
 from __future__ import print_function
 import os
 import re
-import sre_constants
 import sys
 import time
 
@@ -200,7 +199,7 @@ class Core():
                     filter = re.compile(filter, re.UNICODE)
                 else:
                     filter = re.compile(filter)
-            except sre_constants.error as err:
+            except re.error as err:
                 main.set_status_msg(_(u"Regular-Expression: %s") % err, u'warn')
                 app.REmsg = True
                 filter = re.compile(r'')

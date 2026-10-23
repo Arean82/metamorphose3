@@ -12,11 +12,11 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 
-import sre_constants
 
 from .notebook import Notebook
 from .operation import Operation
 from . import replaceTools
+import re
 import utils
 import wx
 
@@ -95,7 +95,7 @@ class OpPanel(Operation):
             # need to first substiute, then parse for backreference support
             try:
                 replaced = searchValues[2].sub(text, newName)
-            except (sre_constants.error, AttributeError) as err:
+            except (re.error, AttributeError) as err:
                 main.set_status_msg(_(u"Regular-Expression: %s") % err, u'warn')
                 # so we know not to change status text after RE error msg:
                 app.REmsg = True

@@ -8,3 +8,6 @@ PACKAGE=metamorphose3
 remusr=0
 
 OS=$(shell uname -s)
+
+# interpreter used for tests and byte-compilation
+PYTHON?=python3

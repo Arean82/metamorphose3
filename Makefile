@@ -42,8 +42,13 @@ remove:
 		find /root/ -depth -name .$(PACKAGE) -exec rm -fR {} \; ;\
 	fi;\
 
+test:
+	$(PYTHON) -m unittest discover -s tests -v
+
 clean:
-	find . -type f -regex ".*\\(pyc\|tmp\|~\)$"" -delete;
+	find . -type f -name "*.py[co]" -delete;
+	find . -type d -name "__pycache__" -exec rm -fr {} +;
+	find . -type f -name "*~" -delete;
 	find . -depth -name "*.svn" -exec rm -fr {} \;
 
 install: install-doc
@@ -55,6 +60,9 @@ install: install-doc
 	# copy program files and libraries
 	mkdir -p $(DESTDIR)$(PREFIX)/share/$(PACKAGE)
 	cp -pR src/* $(DESTDIR)$(PREFIX)/share/$(PACKAGE)/;
+	# never ship bytecode caches
+	find $(DESTDIR)$(PREFIX)/share/$(PACKAGE) -type d -name "__pycache__" -exec rm -fr {} +;
+	find $(DESTDIR)$(PREFIX)/share/$(PACKAGE) -type f -name "*.py[co]" -delete;
 
 	# install translation files
 	cd messages && $(MAKE) install

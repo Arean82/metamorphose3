@@ -147,6 +147,26 @@ def make_info_msg(msg, title=None):
     dlg.Destroy()
 
 
+def leading_int(text):
+    """Return the integer formed by the leading digits, or 0 if there are none."""
+    digits = ''
+    for char in text:
+        if not char.isdigit():
+            break
+        digits += char
+    if not digits:
+        return 0
+    return int(digits)
+
+
+def strip_operation_number(text):
+    """Remove the leading 'N: ' prefix the operation list adds to a name."""
+    head, separator, tail = text.partition(': ')
+    if separator and head.isdigit():
+        return tail
+    return text
+
+
 def get_user_path(file):
     """Return user's default config path."""
     base = wx.StandardPaths.Get().GetUserConfigDir()

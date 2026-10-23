@@ -92,7 +92,7 @@ class Panel(wx.Panel):
                                      label=_(u"case sensitive"), name=u'repl_case', parent=self,
                                      style=0)
         self.repl_case.SetValue(False)
-        self.repl_case.SetToolTipString(_(u"Differentiate between upper and lower case"))
+        self.repl_case.SetToolTip(_(u"Differentiate between upper and lower case"))
         self.repl_case.Bind(wx.EVT_CHECKBOX, self.define_text)
 
         # in between

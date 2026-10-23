@@ -42,19 +42,19 @@ Cloning the sources from the remote::
 
   git clone https://github.com/Arean82/metamorphose3.git
 
-Submodules are used, so after cloning don't forget to check them out::
-
-  git submodule update --init
-
 
 Requirements
 ============
 
 - Python 3.12 or greater
-- wxPython 4.2 or greater (Phoenix)
+- wxPython 4.2 (Phoenix)
 - Pillow 9.0 or greater
 - exifread 3.0 or greater
 - mutagen 1.45 or greater
+
+Install the Python dependencies with::
+
+  pip install -r requirements.txt
 
 
 Running
@@ -108,6 +108,15 @@ To remove all user files as well::
   make remove remusr=1
 
 
+==============
+Upgrading
+==============
+
+Settings and undo logs from earlier versions are not read. User data lives in
+``.metamorphose3``; the application starts with default preferences on first
+launch. Recreate any settings through the preferences dialog.
+
+
 ============
 Known Issues
 ============
@@ -134,4 +143,4 @@ Unreadable picker items under Linux (possibly other GTK)
 
 Thumbnails fail
 
-  There seems to be some problems with python-imaging under windows. Sometimes the image will not load.
+  There seems to be some problems with Pillow under windows. Sometimes the image will not load.

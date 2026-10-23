@@ -1,7 +1,7 @@
 metamorphose3 (3.0.0-1) unstable; urgency=medium
 
   * Python 3 port.
-  * Renamed from Métamorphose 2 to Métamorphose 3.
+  * Renamed the package and application to version 3.
 
  -- Arean <arean@synorastudio.in>  Fri, 23 Oct 2026 15:12:00 +0530
 

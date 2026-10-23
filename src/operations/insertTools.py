@@ -110,7 +110,7 @@ class Panel(wx.Panel):
         self.positionPos = wx.SpinCtrl(id=wxID_PANELPOSITIONPOS, initial=0,
                                        max=255, min=-255, name=u'positionPos', parent=self,
                                        size=wx.Size(56, -1), style=wx.SP_ARROW_KEYS, value='0')
-        self.positionPos.SetToolTipString(_(u"Use negative values to start from the end of the name."))
+        self.positionPos.SetToolTip(_(u"Use negative values to start from the end of the name."))
         self.positionPos.Enable(False)
         self.positionPos.Bind(wx.EVT_SPINCTRL, main.show_preview,
                               id=wxID_PANELPOSITIONPOS)

@@ -32,43 +32,43 @@ import wx
 
 class Panel(wx.Panel):
     def __init_mainsizer_items(self, parent):
-        parent.AddSizer(self.staticBoxSizer1, 0, border=20, flag=wx.ALL)
-        parent.AddSpacer(wx.Size(8, 8), border=0, flag=wx.ALL)
-        parent.AddSizer(self.staticBoxSizer2, 0, border=20, flag=wx.ALL)
+        parent.Add(self.staticBoxSizer1, 0, border=20, flag=wx.ALL)
+        parent.Add(wx.Size(8, 8), border=0, flag=wx.ALL)
+        parent.Add(self.staticBoxSizer2, 0, border=20, flag=wx.ALL)
 
     def _init_coll_byPosSixer_items(self, parent):
-        parent.AddWindow(self.staticText1, 0, border=20,
+        parent.Add(self.staticText1, 0, border=20,
                          flag=wx.ALIGN_CENTER_VERTICAL | wx.LEFT)
-        parent.AddWindow(self.PosStart, 0, border=4, flag=wx.LEFT)
-        parent.AddWindow(self.staticText2, 0, border=10,
+        parent.Add(self.PosStart, 0, border=4, flag=wx.LEFT)
+        parent.Add(self.staticText2, 0, border=10,
                          flag=wx.ALIGN_CENTER_VERTICAL | wx.LEFT)
-        parent.AddWindow(self.PosLength, 0, border=4, flag=wx.LEFT)
+        parent.Add(self.PosLength, 0, border=4, flag=wx.LEFT)
 
     def _init_coll_buttonSizer_items(self, parent):
-        parent.AddWindow(self.upButton, 0, border=5, flag=wx.LEFT)
-        parent.AddWindow(self.downButton, 0, border=4, flag=wx.LEFT)
-        parent.AddWindow(self.upMore, 0, border=8, flag=wx.LEFT)
-        parent.AddWindow(self.downMore, 0, border=4, flag=wx.LEFT)
-        parent.AddWindow(self.upTop, 0, border=8, flag=wx.LEFT)
-        parent.AddWindow(self.downBottom, 0, border=4, flag=wx.LEFT)
+        parent.Add(self.upButton, 0, border=5, flag=wx.LEFT)
+        parent.Add(self.downButton, 0, border=4, flag=wx.LEFT)
+        parent.Add(self.upMore, 0, border=8, flag=wx.LEFT)
+        parent.Add(self.downMore, 0, border=4, flag=wx.LEFT)
+        parent.Add(self.upTop, 0, border=8, flag=wx.LEFT)
+        parent.Add(self.downBottom, 0, border=4, flag=wx.LEFT)
 
     def _init_coll_staticBoxSizer1_items(self, parent):
-        parent.AddWindow(self.ascending, 0, border=5, flag=wx.ALL)
-        parent.AddWindow(self.descending, 0, border=5, flag=wx.ALL)
-        parent.AddWindow(self.manually, 0, border=5, flag=wx.ALL)
-        parent.AddSizer(self.buttonSizer, 0, border=15, flag=wx.RIGHT | wx.LEFT)
-        parent.AddSpacer(wx.Size(10, 10), border=5, flag=0)
-        parent.AddWindow(self.dirsPlace, 0, border=5, flag=wx.ALL)
+        parent.Add(self.ascending, 0, border=5, flag=wx.ALL)
+        parent.Add(self.descending, 0, border=5, flag=wx.ALL)
+        parent.Add(self.manually, 0, border=5, flag=wx.ALL)
+        parent.Add(self.buttonSizer, 0, border=15, flag=wx.RIGHT | wx.LEFT)
+        parent.Add(wx.Size(10, 10), border=5, flag=0)
+        parent.Add(self.dirsPlace, 0, border=5, flag=wx.ALL)
 
     def _init_coll_staticBoxSizer2_items(self, parent):
-        parent.AddWindow(self.normalSort, 0, border=5, flag=wx.ALL)
-        parent.AddWindow(self.intelySort, 0, border=5, flag=wx.ALL)
-        parent.AddWindow(self.byPosition, 0, border=5, flag=wx.ALL)
-        parent.AddSizer(self.byPosSixer, 0, border=5,
+        parent.Add(self.normalSort, 0, border=5, flag=wx.ALL)
+        parent.Add(self.intelySort, 0, border=5, flag=wx.ALL)
+        parent.Add(self.byPosition, 0, border=5, flag=wx.ALL)
+        parent.Add(self.byPosSixer, 0, border=5,
                         flag=wx.BOTTOM | wx.RIGHT | wx.LEFT)
-        parent.AddWindow(self.statSort, 0, border=5, flag=wx.ALL)
-        parent.AddWindow(self.statSortChoice, 0, border=25, flag=wx.LEFT)
-        parent.AddSpacer(wx.Size(8, 8), border=0, flag=0)
+        parent.Add(self.statSort, 0, border=5, flag=wx.ALL)
+        parent.Add(self.statSortChoice, 0, border=25, flag=wx.LEFT)
+        parent.Add(wx.Size(8, 8), border=0, flag=0)
 
     def __init_sizers(self):
         self.mainSizer = wx.BoxSizer(orient=wx.HORIZONTAL)
@@ -131,28 +131,28 @@ class Panel(wx.Panel):
         self.upTop = wx.BitmapButton(bitmap=wx.Bitmap(utils.icon_path(u'upAll.ico'),
                                      wx.BITMAP_TYPE_ICO), id=wxID_SORTINGPANELUPTOP, name=u'upTop',
                                      parent=self, style=wx.BU_AUTODRAW)
-        self.upTop.SetToolTipString(_(u"move to top"))
+        self.upTop.SetToolTip(_(u"move to top"))
         self.upTop.Bind(wx.EVT_BUTTON, self.change_item_order,
                         id=wxID_SORTINGPANELUPTOP)
 
         self.downBottom = wx.BitmapButton(bitmap=wx.Bitmap(utils.icon_path(u'downAll.ico'),
                                           wx.BITMAP_TYPE_ICO), id=wxID_SORTINGPANELDOWNBOTTOM,
                                           name=u'downBottom', parent=self, style=wx.BU_AUTODRAW)
-        self.downBottom.SetToolTipString(_(u"move to bottom"))
+        self.downBottom.SetToolTip(_(u"move to bottom"))
         self.downBottom.Bind(wx.EVT_BUTTON, self.change_item_order,
                              id=wxID_SORTINGPANELDOWNBOTTOM)
 
         self.upMore = wx.BitmapButton(bitmap=wx.Bitmap(utils.icon_path(u'up5.png'),
                                       wx.BITMAP_TYPE_PNG), id=wxID_SORTINGPANELUPMORE, name=u'upMore',
                                       parent=self, style=wx.BU_AUTODRAW)
-        self.upMore.SetToolTipString(_(u"move by 5"))
+        self.upMore.SetToolTip(_(u"move by 5"))
         self.upMore.Bind(wx.EVT_BUTTON, self.change_item_order,
                          id=wxID_SORTINGPANELUPMORE)
 
         self.downMore = wx.BitmapButton(bitmap=wx.Bitmap(utils.icon_path(u'down5.png'),
                                         wx.BITMAP_TYPE_PNG), id=wxID_SORTINGPANELDOWNMORE,
                                         name=u'downMore', parent=self, style=wx.BU_AUTODRAW)
-        self.downMore.SetToolTipString(_(u"move by 5"))
+        self.downMore.SetToolTip(_(u"move by 5"))
         self.downMore.Bind(wx.EVT_BUTTON, self.change_item_order,
                            id=wxID_SORTINGPANELDOWNMORE)
 
@@ -166,7 +166,7 @@ class Panel(wx.Panel):
         self.normalSort = wx.RadioButton(id=wxID_SORTINGPANELNORMALSORT,
                                          label=_(u"Sort normally"), name=u'normalSort',
                                          parent=self, style=wx.RB_GROUP)
-        self.normalSort.SetToolTipString(_(u"Standard sorting by item name."))
+        self.normalSort.SetToolTip(_(u"Standard sorting by item name."))
         self.normalSort.SetValue(True)
         self.normalSort.Bind(wx.EVT_RADIOBUTTON, self.setSortingOptions,
                              id=wxID_SORTINGPANELNORMALSORT)
@@ -174,7 +174,7 @@ class Panel(wx.Panel):
         self.intelySort = wx.RadioButton(id=wxID_SORTINGPANELINTELYSORT,
                                          label=_(u"Sort numbers intelligently"), name=u'intelySort',
                                          parent=self, style=0)
-        self.intelySort.SetToolTipString(_(u"Order these types of items: ...19, 2, 20...\nMay have unpredictable results!"))
+        self.intelySort.SetToolTip(_(u"Order these types of items: ...19, 2, 20...\nMay have unpredictable results!"))
         self.intelySort.Bind(wx.EVT_RADIOBUTTON, self.setStatOptions,
                              id=wxID_SORTINGPANELINTELYSORT)
 

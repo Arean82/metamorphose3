@@ -107,10 +107,10 @@ class ItemList(wx.ListCtrl):
         self.InsertColumn(0, "First")
         self.SetColumnWidth(0, 470)
 
-        self.attr1 = wx.ListItemAttr()
+        self.attr1 = wx.ItemAttr()
         self.attr1.SetBackgroundColour("yellow")
 
-        self.attr2 = wx.ListItemAttr()
+        self.attr2 = wx.ItemAttr()
         self.attr2.SetBackgroundColour("light blue")
 
         self.Bind(wx.EVT_LIST_ITEM_DESELECTED, self.OnItemDeselected)
@@ -225,7 +225,7 @@ class ItemList(wx.ListCtrl):
         # list folders first
         folders.sort(key=lambda x: x.lower())
         for i in range(len(folders)):
-            self.InsertImageStringItem(i, folders[i], 0)
+            self.InsertItem(i, folders[i], 0)
 
         # ... then files
         def _make_key(f): return (os.path.dirname(f), f.lower())
@@ -247,7 +247,7 @@ class ItemList(wx.ListCtrl):
                     self.thumbnails[fullitem] = img
             else:
                 img = 1
-            self.InsertImageStringItem(i, item, img)
+            self.InsertItem(i, item, img)
             i += 1
 
     """
@@ -293,34 +293,34 @@ class Panel(wx.Panel):
         SelectSizer = self.SelectSizer = wx.BoxSizer(orient=wx.HORIZONTAL)
         mainSizer = self.mainSizer = wx.BoxSizer(orient=wx.VERTICAL)
 
-        PathSizer.AddWindow(self.browse, 0, wx.ALL, 5, wx.ALIGN_CENTER)
-        PathSizer.AddWindow(self.path, 1, wx.ALIGN_CENTER | wx.RIGHT, 5)
-        PathSizer.AddWindow(self.walkIt, 0, wx.ALIGN_CENTER | wx.RIGHT, 5)
-        PathSizer.AddWindow(self.staticText2, 0, wx.ALIGN_CENTER | wx.RIGHT, 3)
-        PathSizer.AddWindow(self.walkDepth, 0, wx.ALIGN_CENTER | wx.RIGHT, 15)
-        PathSizer.AddWindow(self.ok, 0, wx.RIGHT | wx.ALIGN_CENTER, 8)
+        PathSizer.Add(self.browse, 0, wx.ALL, 5, wx.ALIGN_CENTER)
+        PathSizer.Add(self.path, 1, wx.ALIGN_CENTER | wx.RIGHT, 5)
+        PathSizer.Add(self.walkIt, 0, wx.ALIGN_CENTER | wx.RIGHT, 5)
+        PathSizer.Add(self.staticText2, 0, wx.ALIGN_CENTER | wx.RIGHT, 3)
+        PathSizer.Add(self.walkDepth, 0, wx.ALIGN_CENTER | wx.RIGHT, 15)
+        PathSizer.Add(self.ok, 0, wx.RIGHT | wx.ALIGN_CENTER, 8)
 
-        SelectSizer.AddWindow(self.notType, 0, wx.ALIGN_CENTER)
-        SelectSizer.AddWindow(self.staticText1, 0, wx.ALIGN_CENTER | wx.LEFT, 3)
-        SelectSizer.AddWindow(self.FilterSel, 20, wx.ALIGN_CENTER)
-        SelectSizer.AddWindow(self.filterByRE, 0, wx.ALIGN_CENTER | wx.LEFT, 5)
-        SelectSizer.AddWindow(self.ignoreCase, 0, wx.ALIGN_CENTER | wx.LEFT, 2)
-        SelectSizer.AddWindow(self.useLocale, 0, wx.ALIGN_CENTER | wx.LEFT, 2)
-        SelectSizer.AddSpacer((-1, -1), 1, wx.EXPAND)
-        SelectSizer.AddWindow(self.divider1, 0, wx.ALIGN_CENTER)
-        SelectSizer.AddSpacer((-1, -1), 1, wx.EXPAND)
-        SelectSizer.AddWindow(self.select, 0, wx.RIGHT | wx.ALIGN_CENTER, 5)
-        SelectSizer.AddWindow(self.foldersOn, 0, wx.ALIGN_CENTER | wx.RIGHT, 7)
-        SelectSizer.AddWindow(self.filesOn, 0, wx.ALIGN_CENTER | wx.RIGHT, 5)
-        SelectSizer.AddSpacer((-1, -1), 1, wx.EXPAND)
-        SelectSizer.AddWindow(self.selectAll, 0, wx.RIGHT, 2)
-        SelectSizer.AddWindow(self.selectNone, 0)
-        SelectSizer.AddSpacer((-1, -1), 1, wx.EXPAND)
+        SelectSizer.Add(self.notType, 0, wx.ALIGN_CENTER)
+        SelectSizer.Add(self.staticText1, 0, wx.ALIGN_CENTER | wx.LEFT, 3)
+        SelectSizer.Add(self.FilterSel, 20, wx.ALIGN_CENTER)
+        SelectSizer.Add(self.filterByRE, 0, wx.ALIGN_CENTER | wx.LEFT, 5)
+        SelectSizer.Add(self.ignoreCase, 0, wx.ALIGN_CENTER | wx.LEFT, 2)
+        SelectSizer.Add(self.useLocale, 0, wx.ALIGN_CENTER | wx.LEFT, 2)
+        SelectSizer.Add((-1, -1), 1, wx.EXPAND)
+        SelectSizer.Add(self.divider1, 0, wx.ALIGN_CENTER)
+        SelectSizer.Add((-1, -1), 1, wx.EXPAND)
+        SelectSizer.Add(self.select, 0, wx.RIGHT | wx.ALIGN_CENTER, 5)
+        SelectSizer.Add(self.foldersOn, 0, wx.ALIGN_CENTER | wx.RIGHT, 7)
+        SelectSizer.Add(self.filesOn, 0, wx.ALIGN_CENTER | wx.RIGHT, 5)
+        SelectSizer.Add((-1, -1), 1, wx.EXPAND)
+        SelectSizer.Add(self.selectAll, 0, wx.RIGHT, 2)
+        SelectSizer.Add(self.selectNone, 0)
+        SelectSizer.Add((-1, -1), 1, wx.EXPAND)
 
-        mainSizer.AddWindow(self.pathHelp, 0, wx.EXPAND | wx.LEFT | wx.TOP, 6)
-        mainSizer.AddSizer(PathSizer, 0, wx.EXPAND | wx.ALIGN_CENTER)
-        mainSizer.AddSizer(SelectSizer, 0, wx.LEFT | wx.EXPAND, 6)
-        mainSizer.AddWindow(self.selectionArea, 1, wx.EXPAND | wx.TOP, 3)
+        mainSizer.Add(self.pathHelp, 0, wx.EXPAND | wx.LEFT | wx.TOP, 6)
+        mainSizer.Add(PathSizer, 0, wx.EXPAND)
+        mainSizer.Add(SelectSizer, 0, wx.LEFT | wx.EXPAND, 6)
+        mainSizer.Add(self.selectionArea, 1, wx.EXPAND | wx.TOP, 3)
 
         self.SetSizerAndFit(mainSizer)
 
@@ -339,12 +339,12 @@ class Panel(wx.Panel):
         #self.ok = wx.BitmapButton(bitmap=reloadImg, id=wxID_PICKERPANELOK, name=u'OK',
         #      parent=self, style=wx.BU_AUTODRAW)
         self.ok.Enable(True)
-        self.ok.SetToolTipString(_(u"Load or reload current path"))
+        self.ok.SetToolTip(_(u"Load or reload current path"))
         self.ok.Bind(wx.EVT_BUTTON, self.Core.set_path, id=wxID_PICKERPANELOK)
 
         self.browse = wx.Button(id=wxID_PICKERPANELBROWSE, label=_(u"Browse"),
                                 name=u'BROWSE', parent=self, style=wx.BU_EXACTFIT)
-        self.browse.SetToolTipString(_(u"Browse for path"))
+        self.browse.SetToolTip(_(u"Browse for path"))
         self.browse.Bind(wx.EVT_BUTTON, self.browse_for_path,
                          id=wxID_PICKERPANELBROWSE)
 
@@ -383,7 +383,7 @@ class Panel(wx.Panel):
         self.FilterSel = wx.ComboBox(choices=keys, id=wxID_PICKERPANELFILTERSEL,
                                      name=u'FilterSel', parent=self, style=wx.TE_PROCESS_ENTER)
         self.FilterSel.SetSelection(0)
-        self.FilterSel.SetToolTipString(_(u"Names containing (Use menu or enter text)"))
+        self.FilterSel.SetToolTip(_(u"Names containing (Use menu or enter text)"))
         self.FilterSel.Bind(wx.EVT_COMBOBOX, self._on_filter_sel,
                             id=wxID_PICKERPANELFILTERSEL)
         self.FilterSel.Bind(wx.EVT_TEXT_ENTER, self._refresh_items,
@@ -395,7 +395,7 @@ class Panel(wx.Panel):
         self.filterByRE = wx.CheckBox(id=wxID_PICKERPANELFILTERBYRE, label=_(u"Reg-Expr"),
                                       name=u'filterByRE', parent=self)
         self.filterByRE.SetValue(False)
-        self.filterByRE.SetToolTipString(_(u"Evaluate filter as a regular expression"))
+        self.filterByRE.SetToolTip(_(u"Evaluate filter as a regular expression"))
         self.filterByRE.Bind(wx.EVT_CHECKBOX, self.__regex_options,
                              id=wxID_PICKERPANELFILTERBYRE)
 
@@ -403,7 +403,7 @@ class Panel(wx.Panel):
                                       name=u'ignoreCase', parent=self)
         self.ignoreCase.SetValue(True)
         self.ignoreCase.Enable(False)
-        self.ignoreCase.SetToolTipString(_(u"case-Insensitive match"))
+        self.ignoreCase.SetToolTip(_(u"case-Insensitive match"))
         self.ignoreCase.Bind(wx.EVT_CHECKBOX, self._refresh_items,
                              id=wxID_PICKERPANELIGNORECASE)
 
@@ -411,14 +411,14 @@ class Panel(wx.Panel):
                                      name=u'useLocale', parent=self)
         self.useLocale.SetValue(True)
         self.useLocale.Enable(False)
-        self.useLocale.SetToolTipString(_(r"Unicode match (\w matches 'a','b','c', etc)"))
+        self.useLocale.SetToolTip(_(r"Unicode match (\w matches 'a','b','c', etc)"))
         self.useLocale.Bind(wx.EVT_CHECKBOX, self._refresh_items,
                             id=wxID_PICKERPANELUSELOCALE)
 
         self.walkIt = wx.CheckBox(id=wxID_PICKERPANELWALKIT, label=_(u"Recursive"),
                                   name=u'walkIt', parent=self)
         self.walkIt.SetValue(False)
-        self.walkIt.SetToolTipString(_(u"Get all files in directory and sub-directories, but no folders"))
+        self.walkIt.SetToolTip(_(u"Get all files in directory and sub-directories, but no folders"))
         self.walkIt.Bind(wx.EVT_CHECKBOX, self.__on_recursive_checkbox,
                          id=wxID_PICKERPANELWALKIT)
 
@@ -430,7 +430,7 @@ class Panel(wx.Panel):
                                      max=999, min=0, name=u'walkDepth', parent=self,
                                      size=wx.Size(56, -1), style=wx.SP_ARROW_KEYS, value='0')
         self.walkDepth.SetValue(0)
-        self.walkDepth.SetToolTipString(_(u"Number of levels to descend, 0 = unlimited"))
+        self.walkDepth.SetToolTip(_(u"Number of levels to descend, 0 = unlimited"))
         self.walkDepth.Enable(False)
         self.walkDepth.Bind(wx.EVT_SPINCTRL, self._refresh_items,
                             id=wxID_PICKERPANELWALKDEPTH)
@@ -438,7 +438,7 @@ class Panel(wx.Panel):
         self.notType = wx.CheckBox(id=wxID_PICKERPANELNOT_TYPE, label=_(u"Not"),
                                    name=u'notType', parent=self)
         self.notType.SetValue(False)
-        self.notType.SetToolTipString(_(u"NOT containing"))
+        self.notType.SetToolTip(_(u"NOT containing"))
         self.notType.Bind(wx.EVT_CHECKBOX, self._refresh_items,
                           id=wxID_PICKERPANELNOT_TYPE)
 

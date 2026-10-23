@@ -16,7 +16,6 @@
 The renamer panel, it allows displaying and controlling all operation panels.
 """
 
-import re
 
 import app
 import operations
@@ -101,7 +100,7 @@ class OperationDropTarget(wx.TextDropTarget):
         if pos < 0:
             pos = self.itemCount - 1
         if ':' in data:
-            n = int(re.search(r'\d*', data).group(0))
+            n = utils.leading_int(data)
             moveBy = (pos - n) + 1
             self.prnt.move_operations(moveBy, n-1)
         else:
@@ -138,9 +137,10 @@ class IntroTextPanel(wx.Panel):
             # create temporary instance of panel to get size
             op = operations.defs[op][0]
             opPanel = getattr(operations, op).OpPanel(prnt, main)
-            size = opPanel.GetSizeTuple()
-            if size > txtSize:
-                txtSize = size
+            size = opPanel.GetSize()
+            sizeTuple = (size[0], size[1])
+            if sizeTuple > txtSize:
+                txtSize = sizeTuple
             opPanel.Destroy()
 
         fontParams = app.fontParams
@@ -149,7 +149,7 @@ class IntroTextPanel(wx.Panel):
         fontStyle = fontParams['style']
 
         # adjust vertical spacing for top bar
-        gap = prnt.moveDown.GetSizeTuple()[1] + 24
+        gap = prnt.moveDown.GetSize()[1] + 24
 
         self.staticText1 = wx.StaticText(id=-1,
                                          label=_(u"You don't have any operations defined."),
@@ -184,31 +184,31 @@ class Panel(wx.Panel):
         mainSizer = self.mainSizer = wx.BoxSizer(wx.HORIZONTAL)
 
         leftSizer = wx.BoxSizer(wx.VERTICAL)
-        leftSizer.AddWindow(self.staticText1, 0, )
-        leftSizer.AddWindow(self.availableOperations, 0, wx.BOTTOM, 5)
-        leftSizer.AddWindow(self.staticText2, 0, wx.TOP, 5)
-        leftSizer.AddWindow(self.usedOperations, 1)
-        mainSizer.AddSizer(leftSizer, 0, wx.EXPAND | wx.ALL, 5)
+        leftSizer.Add(self.staticText1, 0, )
+        leftSizer.Add(self.availableOperations, 0, wx.BOTTOM, 5)
+        leftSizer.Add(self.staticText2, 0, wx.TOP, 5)
+        leftSizer.Add(self.usedOperations, 1)
+        mainSizer.Add(leftSizer, 0, wx.EXPAND | wx.ALL, 5)
 
         rightSizer = self.rightSizer = wx.BoxSizer(wx.VERTICAL)
         rightTopSizer = self.rightTopSizer = wx.BoxSizer(wx.HORIZONTAL)
-        rightTopSizer.AddWindow(self.staticText3, 0, wx.ALIGN_CENTRE | wx.LEFT, 5)
-        rightTopSizer.AddWindow(self.moveDown, 0, wx.ALIGN_CENTRE | wx.LEFT, 3)
-        rightTopSizer.AddWindow(self.moveUp, 0, wx.ALIGN_CENTRE | wx.RIGHT, 25)
-        rightTopSizer.AddSpacer((-1, 1), 1)
-        rightTopSizer.AddWindow(self.staticText4, 0, wx.ALIGN_CENTRE | wx.RIGHT, 5)
-        rightTopSizer.AddWindow(self.applyName, 0, wx.ALIGN_CENTRE | wx.RIGHT, 3)
-        rightTopSizer.AddWindow(self.applyExtension, 0, wx.ALIGN_CENTRE | wx.RIGHT, 15)
-        rightTopSizer.AddSpacer((-1, 1), 5)
-        rightTopSizer.AddWindow(self.enableOperation, 0, wx.ALIGN_CENTRE | wx.RIGHT, 5)
-        rightTopSizer.AddWindow(self.resetOperationButton, 0, wx.ALIGN_CENTRE | wx.RIGHT, 10)
-        rightTopSizer.AddWindow(self.deleteOperations, 0, wx.ALIGN_CENTRE | wx.RIGHT, 5)
-        rightTopSizer.AddSpacer((-1, 1), 5)
-        rightSizer.AddSizer(rightTopSizer, 0, wx.TOP | wx.BOTTOM | wx.EXPAND, 3)
-        rightTopSizer.AddSpacer((1, 10), 0)
-        rightSizer.AddWindow(self.staticText5, 0, flag=wx.LEFT, border=20)
+        rightTopSizer.Add(self.staticText3, 0, wx.ALIGN_CENTRE | wx.LEFT, 5)
+        rightTopSizer.Add(self.moveDown, 0, wx.ALIGN_CENTRE | wx.LEFT, 3)
+        rightTopSizer.Add(self.moveUp, 0, wx.ALIGN_CENTRE | wx.RIGHT, 25)
+        rightTopSizer.Add((-1, 1), 1)
+        rightTopSizer.Add(self.staticText4, 0, wx.ALIGN_CENTRE | wx.RIGHT, 5)
+        rightTopSizer.Add(self.applyName, 0, wx.ALIGN_CENTRE | wx.RIGHT, 3)
+        rightTopSizer.Add(self.applyExtension, 0, wx.ALIGN_CENTRE | wx.RIGHT, 15)
+        rightTopSizer.Add((-1, 1), 5)
+        rightTopSizer.Add(self.enableOperation, 0, wx.ALIGN_CENTRE | wx.RIGHT, 5)
+        rightTopSizer.Add(self.resetOperationButton, 0, wx.ALIGN_CENTRE | wx.RIGHT, 10)
+        rightTopSizer.Add(self.deleteOperations, 0, wx.ALIGN_CENTRE | wx.RIGHT, 5)
+        rightTopSizer.Add((-1, 1), 5)
+        rightSizer.Add(rightTopSizer, 0, wx.TOP | wx.BOTTOM | wx.EXPAND, 3)
+        rightTopSizer.Add((1, 10), 0)
+        rightSizer.Add(self.staticText5, 0, flag=wx.LEFT, border=20)
 
-        mainSizer.AddSizer(rightSizer, 1, wx.EXPAND)
+        mainSizer.Add(rightSizer, 1, wx.EXPAND)
         self.SetSizerAndFit(mainSizer)
 
     def __init_menu(self, parent, n):
@@ -222,8 +222,8 @@ class Panel(wx.Panel):
         applyTo.extension = wx.MenuItem(applyTo, wxID_MENUAPPLYEXTENSION,
                                         _(u"Extension"), kind=wx.ITEM_CHECK)
 
-        applyTo.AppendItem(applyTo.name)
-        applyTo.AppendItem(applyTo.extension)
+        applyTo.Append(applyTo.name)
+        applyTo.Append(applyTo.extension)
 
         self.Bind(wx.EVT_MENU, self.__set_operations_apply_menu,
                   id=wxID_MENUAPPLYNAME)
@@ -274,16 +274,16 @@ class Panel(wx.Panel):
         
         parent.changeName = wx.MenuItem(parent, wxID_MENUCHANGENAME, _(u"Change Name"))
 
-        parent.AppendItem(parent.up)
-        parent.AppendItem(parent.down)
+        parent.Append(parent.up)
+        parent.Append(parent.down)
         if _(u"directory") not in self.usedOperations.GetItemText(n):
             parent.applyToMenu = wx.MenuItem(parent, -1, _(u"Apply to"),
                                              subMenu=applyTo)
-            parent.AppendItem(parent.applyToMenu)
-        parent.AppendItem(parent.disable)
-        parent.AppendItem(parent.reset)
-        parent.AppendItem(parent.destroy)
-        parent.AppendItem(parent.destroyAll)
+            parent.Append(parent.applyToMenu)
+        parent.Append(parent.disable)
+        parent.Append(parent.reset)
+        parent.Append(parent.destroy)
+        parent.Append(parent.destroyAll)
 
         self.Bind(wx.EVT_MENU, self.__move_up_button,
                   id=wxID_MENUUP)
@@ -317,7 +317,7 @@ class Panel(wx.Panel):
         # add operations to list
         i = 0
         for op in sorted(operations.defs.keys()):
-            self.availableOperations.InsertStringItem(i, op)
+            self.availableOperations.InsertItem(i, op)
             i += 1
 
         # set vertical size
@@ -349,21 +349,21 @@ class Panel(wx.Panel):
         self.moveDown = wx.BitmapButton(bitmap=wx.Bitmap(utils.icon_path(u'down.png'),
                                         wx.BITMAP_TYPE_PNG), id=wxID_MOVEDOWN, name=u'moveDown',
                                         parent=self, style=wx.BU_AUTODRAW)
-        self.moveDown.SetToolTipString(_(u"Move current operation down by 1"))
+        self.moveDown.SetToolTip(_(u"Move current operation down by 1"))
         self.moveDown.Bind(wx.EVT_BUTTON, self.__move_down_button,
                            id=wxID_MOVEDOWN)
 
         self.moveUp = wx.BitmapButton(bitmap=wx.Bitmap(utils.icon_path(u'up.png'),
                                       wx.BITMAP_TYPE_PNG), id=wxID_MOVEUP, name=u'moveUp',
                                       parent=self, style=wx.BU_AUTODRAW)
-        self.moveUp.SetToolTipString(_(u"Move current operation up by 1"))
+        self.moveUp.SetToolTip(_(u"Move current operation up by 1"))
         self.moveUp.Bind(wx.EVT_BUTTON, self.__move_up_button,
                          id=wxID_MOVEUP)
 
         self.enableOperation = wx.ToggleButton(id=wxID_ENABLEOPERATION,
                                                label=_(u"Disable"), name=u'enableOperation', parent=self,
                                                style=wx.BU_EXACTFIT)
-        self.enableOperation.SetToolTipString(_(u"Enable or Disable current operation"))
+        self.enableOperation.SetToolTip(_(u"Enable or Disable current operation"))
         self.enableOperation.SetValue(False)
         self.enableOperation.Bind(wx.EVT_TOGGLEBUTTON,
                                   self.__operation_toggle_btn, id=wxID_ENABLEOPERATION)
@@ -371,13 +371,13 @@ class Panel(wx.Panel):
         self.deleteOperations = wx.Choice(choices=[_(u"Delete"), _(u"Delete All")],
                                           id=wxID_DELETEOPERATIONS, name=u'actions', parent=self)
         self.deleteOperations.SetSelection(0)
-        self.deleteOperations.SetToolTipString(_(u"Delete operations"))
+        self.deleteOperations.SetToolTip(_(u"Delete operations"))
         self.deleteOperations.Bind(wx.EVT_CHOICE, self.__actions_choice, id=wxID_DELETEOPERATIONS)
 
         self.resetOperationButton = wx.Button(id=wxID_RESETOPERATIONBUTTON,
                                               label=_(u"Reset"), name=u'resetOperationButton', parent=self,
                                               style=wx.BU_EXACTFIT)
-        self.resetOperationButton.SetToolTipString(_(u"Reset the current operation"))
+        self.resetOperationButton.SetToolTip(_(u"Reset the current operation"))
         self.resetOperationButton.Bind(wx.EVT_BUTTON, self.__reset_operation,
                                        id=wxID_RESETOPERATIONBUTTON)
 
@@ -474,7 +474,7 @@ class Panel(wx.Panel):
         self.mainSizer.Layout()
 
     def __add_operation_to_list(self, pos, opName):
-        self.usedOperations.InsertStringItem(pos, str(pos + 1) + u": " + opName)
+        self.usedOperations.InsertItem(pos, str(pos + 1) + u": " + opName)
 
     def __set_operations_apply_menu(self, event):
         """
@@ -582,8 +582,7 @@ class Panel(wx.Panel):
         n = self.get_current_operation_numb()
         if n != None:
             text = self.usedOperations.GetItemText(n)
-            text = re.search("(?<=: ).+$", text)
-            op = text.group()
+            op = utils.strip_operation_number(text)
             dlg = wx.MessageDialog(self, _("Really reset this '%s' operation?") % op,
                                    _("Are You Sure?"), wx.YES_NO | wx.YES_DEFAULT | wx.ICON_WARNING)
             if dlg.ShowModal() == wx.ID_YES:
@@ -665,7 +664,7 @@ class Panel(wx.Panel):
                 oldText = self.usedOperations.GetItemText(n)
 
                 self.usedOperations.DeleteItem(n)
-                self.usedOperations.InsertStringItem(moveTo, oldText)
+                self.usedOperations.InsertItem(moveTo, oldText)
                 self.__reassign_numbers()
                 self.Core.move_operations(n, moveTo)
                 self.usedOperations.Select(moveTo)
@@ -686,7 +685,7 @@ class Panel(wx.Panel):
         n = self.get_current_operation_numb()
         if n != None:
             type = self.usedOperations.GetItemText(n)
-            type = re.sub(r"\d{1,}: ", '', type)
+            type = utils.strip_operation_number(type)
 
             dlg = wx.MessageDialog(self, _("Really destroy this '%s' operation?") % type,
                                    _("Are You Sure?"), wx.YES_NO | wx.YES_DEFAULT | wx.ICON_WARNING)

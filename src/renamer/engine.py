@@ -274,13 +274,13 @@ class Core():
             pass
         else:
             def get_name(x): return x[0]
-            commonPrefix = os.path.commonprefix(map(get_name, original)).rstrip(os.sep)
+            commonPrefix = os.path.commonprefix(list(map(get_name, original))).rstrip(os.sep)
             if os.path.exists(commonPrefix):
                 main.picker.view.path.SetValue(commonPrefix)
                 main.picker.view.dirPicker.SetPath(commonPrefix)
 
             if not len(original) == 0:
-                main.toRename = zip(renamed, original)#reverse order from original rename!
+                main.toRename = list(zip(renamed, original))#reverse order from original rename!
                 main.currentItem = None
                 main.display_results()
                 main.rename_items(u'undo')

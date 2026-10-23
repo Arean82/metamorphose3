@@ -23,24 +23,24 @@ import wx
 
 class Panel(wx.Panel):
     def __init_itemsizer_items(self, parent):
-        parent.AddWindow(self.showPreviewIcons, 0, border=10, flag=wx.ALL)
-        parent.AddWindow(self.onlyShowChangedItems, 0, border=10, flag=wx.ALL)
-        parent.AddWindow(self.showPreviewHighlight, 0, border=10, flag=wx.ALL)
-        parent.AddWindow(self.staticText2, 0, border=10, flag=wx.ALL)
-        parent.AddSizer(self.boxsizer1, 0, border=25, flag=wx.LEFT)
-        parent.AddSpacer(wx.Size(8, 8), border=0, flag=0)
-        parent.AddWindow(self.showProgressDialog, 0, border=10, flag=wx.ALL)
-        parent.AddSizer(self.boxsizer2, 0, border=25, flag=wx.LEFT)
+        parent.Add(self.showPreviewIcons, 0, border=10, flag=wx.ALL)
+        parent.Add(self.onlyShowChangedItems, 0, border=10, flag=wx.ALL)
+        parent.Add(self.showPreviewHighlight, 0, border=10, flag=wx.ALL)
+        parent.Add(self.staticText2, 0, border=10, flag=wx.ALL)
+        parent.Add(self.boxsizer1, 0, border=25, flag=wx.LEFT)
+        parent.Add(wx.Size(8, 8), border=0, flag=0)
+        parent.Add(self.showProgressDialog, 0, border=10, flag=wx.ALL)
+        parent.Add(self.boxsizer2, 0, border=25, flag=wx.LEFT)
 
     def _init_boxsizer1(self, parent):
-        parent.AddWindow(self.staticText1, 0, border=8,
+        parent.Add(self.staticText1, 0, border=8,
                          flag=wx.ALIGN_CENTER | wx.RIGHT)
-        parent.AddWindow(self.renRefreshMin, 0, border=0, flag=wx.ALIGN_CENTER)
+        parent.Add(self.renRefreshMin, 0, border=0, flag=wx.ALIGN_CENTER)
 
     def _init_boxsizer2(self, parent):
-        parent.AddWindow(self.staticText3, 0, border=10,
+        parent.Add(self.staticText3, 0, border=10,
                          flag=wx.RIGHT | wx.ALIGN_CENTER)
-        parent.AddWindow(self.itemCountForProgDialog, 0, border=0, flag=0)
+        parent.Add(self.itemCountForProgDialog, 0, border=0, flag=0)
 
     def __init_sizers(self):
         self.boxsizer1 = wx.BoxSizer(orient=wx.HORIZONTAL)
@@ -50,7 +50,7 @@ class Panel(wx.Panel):
         self._init_boxsizer2(self.boxsizer2)
         self.__init_itemsizer_items(self.itemSizer)
         self.mainSizer = wx.BoxSizer(orient=wx.VERTICAL)
-        self.mainSizer.AddSizer(self.itemSizer, 0, border=10,
+        self.mainSizer.Add(self.itemSizer, 0, border=10,
                                 flag=wx.ALIGN_CENTER_HORIZONTAL | wx.ALL)
         self.SetSizer(self.mainSizer)
 
@@ -88,7 +88,7 @@ class Panel(wx.Panel):
                                          max=300, min=1, name=u'renRefreshMin', parent=self,
                                          size=wx.Size(55, -1), style=wx.SP_ARROW_KEYS, value='80')
         self.renRefreshMin.SetValue(80)
-        self.renRefreshMin.SetToolTipString(_(u"Higher = faster ; Lower = more feedback"))
+        self.renRefreshMin.SetToolTip(_(u"Higher = faster ; Lower = more feedback"))
 
         self.showProgressDialog = wx.CheckBox(id=wxID_PANELSHOWPROGRESSDIALOG,
                                               label=_(u"Show progress dialog when previewing many items"),

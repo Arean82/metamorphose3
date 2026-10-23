@@ -31,12 +31,12 @@ class Panel(wx.Panel):
         bottomSizer.Add(self.repl_txt, 1, wx.LEFT | wx.RIGHT, 5)
 
         replaceWithSizer = wx.StaticBoxSizer(self.staticBox1, wx.VERTICAL)
-        replaceWithSizer.AddSizer(bottomSizer, 0, wx.EXPAND | wx.TOP, 5)
+        replaceWithSizer.Add(bottomSizer, 0, wx.EXPAND | wx.TOP, 5)
         replaceWithSizer.Add(self.opButtonsPanel, 0, wx.EXPAND | wx.TOP | wx.BOTTOM, 2)
 
         mainSizer.Add(self.search, 0, wx.EXPAND | wx.LEFT | wx.RIGHT | wx.TOP, 5)
-        mainSizer.AddSpacer((1, 5))
-        mainSizer.AddSizer(replaceWithSizer, 0, wx.EXPAND | wx.ALL, 5)
+        mainSizer.Add((1, 5))
+        mainSizer.Add(replaceWithSizer, 0, wx.EXPAND | wx.ALL, 5)
         self.SetSizerAndFit(mainSizer)
 
     def __init_ctrls(self, prnt):
@@ -61,7 +61,7 @@ class Panel(wx.Panel):
         self.repl_txt = wx.TextCtrl(id=wxID_PANELREPL_TXT,
                                     name=u'repl_txt', parent=self,
                                     style=wx.TE_PROCESS_ENTER, value=u'')
-        self.repl_txt.SetToolTipString(_(u"Keep blank to delete."))
+        self.repl_txt.SetToolTip(_(u"Keep blank to delete."))
         self.repl_txt.Bind(wx.EVT_TEXT, main.show_preview)
         self.repl_txt.Bind(wx.EVT_TEXT_ENTER, main.show_preview)
 

@@ -24,18 +24,18 @@ class Panel(wx.Panel):
     """Automation preferences panel."""
 
     def __init_itemsizer_items(self, parent):
-        parent.AddWindow(self.autoSelectAll, 0, border=10, flag=wx.ALL)
-        parent.AddWindow(self.reloadAfterRename, 0, border=10, flag=wx.ALL)
-        parent.AddWindow(self.previewOnConfig, 0, border=10, flag=wx.ALL)
-        parent.AddWindow(self.alwaysMakeLog, 0, border=10, flag=wx.ALL)
-        parent.AddWindow(self.autoShowError, 0, border=10, flag=wx.ALL)
-        parent.AddSpacer(wx.Size(5, 5), border=0, flag=0)
+        parent.Add(self.autoSelectAll, 0, border=10, flag=wx.ALL)
+        parent.Add(self.reloadAfterRename, 0, border=10, flag=wx.ALL)
+        parent.Add(self.previewOnConfig, 0, border=10, flag=wx.ALL)
+        parent.Add(self.alwaysMakeLog, 0, border=10, flag=wx.ALL)
+        parent.Add(self.autoShowError, 0, border=10, flag=wx.ALL)
+        parent.Add(wx.Size(5, 5), border=0, flag=0)
 
     def __init_sizers(self):
         self.itemSizer = wx.BoxSizer(orient=wx.VERTICAL)
         self.__init_itemsizer_items(self.itemSizer)
         self.mainSizer = wx.BoxSizer(orient=wx.VERTICAL)
-        self.mainSizer.AddSizer(self.itemSizer, 0, border=10,
+        self.mainSizer.Add(self.itemSizer, 0, border=10,
                                 flag=wx.ALIGN_CENTER_HORIZONTAL | wx.ALL)
         self.SetSizer(self.mainSizer)
 

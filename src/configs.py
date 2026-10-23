@@ -19,7 +19,6 @@ Handle loading and saving configuration XML files.
 """
 
 from os import path
-import re
 import time
 from xml.dom import minidom
 from xml.sax.saxutils import escape
@@ -133,7 +132,7 @@ class SaveConfig():
 
         for i in range(operationList.GetItemCount()):
             type = operationList.GetItemText(i)
-            type = re.sub(r"\d{1,}: ", '', type)
+            type = utils.strip_operation_number(type)
             type = operations.defs[type][0]
             operation = operationStack[i]
             cfg += u'\t\t<operation id="%s" type="%s">\n' % (i, type)
@@ -151,7 +150,7 @@ class SaveConfig():
         """Create an XML configuration file."""
         datetime = utils.udate(main, '%Y-%m-%d %H:%M:%S', time.localtime())
         cfgFile = u'<?xml version="1.0" encoding="UTF-8"?>\n'
-        cfgFile += u'<configuration application="Métamorphose-2" ' + \
+        cfgFile += u'<configuration application="Métamorphose-3" ' + \
             'version="%s" datetime="%s">\n'\
             % (app.version, datetime)
         # get info for 'normal' notebook tabs

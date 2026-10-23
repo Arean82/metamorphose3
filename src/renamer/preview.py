@@ -20,7 +20,6 @@ Takes user settings and generates new names based on them.
 
 from __future__ import print_function
 import os
-import re
 import time
 
 import app
@@ -43,7 +42,7 @@ class Core():
         def getActive(x):
             if x.IsEnabled():
                 return x
-        return filter(getActive, main.renamer.operations)
+        return list(filter(getActive, main.renamer.operations))
 
     def addStatus(self, x):
         """Add renamed status."""
@@ -102,8 +101,8 @@ class Core():
             if progressDialog.update(main.ec) == False:
                 break
 
-        self.items_ren = map(self.addStatus, self.items_ren)
-        main.toRename = zip(main.items, self.items_ren)
+        self.items_ren = list(map(self.addStatus, self.items_ren))
+        main.toRename = list(zip(main.items, self.items_ren))
 
         progressDialog.destroy()
 
@@ -180,10 +179,10 @@ class Core():
         # blank file name, but extension is there
         # check original name too, to avoid flagging hidden files in *nix.
         leaf = os.path.basename(itemToRename)
-        newBlank = re.search(r"^\..+", renamedItem)
-        oldBlank = re.search(r"^\..+", leaf)
+        newBlank = renamedItem.startswith(".") and len(renamedItem) > 1
+        oldBlank = leaf.startswith(".") and len(leaf) > 1
 
-        if  (newBlank != None and oldBlank == None) and ec not in warn\
+        if  (newBlank and not oldBlank) and ec not in warn\
             and ec not in bad and os.path.isfile(itemToRename):
                 self.appendErrorLog(ec, itemToRename, _(u"Blank file name"), u'warn')
 
@@ -339,10 +338,10 @@ class Core():
 
         progressDialog.destroy()
 
-        items_ren = map(self.addStatus, self.items_ren)
+        items_ren = list(map(self.addStatus, self.items_ren))
 
         # make new dict with original and renamed files:
-        main.toRename = zip(main.items, items_ren)
+        main.toRename = list(zip(main.items, items_ren))
         del items_ren
 
         main.menuFile.SaveLog.Enable(True)

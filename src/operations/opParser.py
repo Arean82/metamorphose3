@@ -20,7 +20,6 @@
 import calendar
 import locale
 import os
-import re
 import sys
 import time
 
@@ -45,6 +44,25 @@ from mutagen.trueaudio import TrueAudio
 from mutagen.wavpack import WavPack
 from . import roman
 import utils
+
+IMAGE_EXTENSIONS = ('tif', 'tiff', 'jpg', 'jpeg', 'jtif', 'thm')
+AUDIO_EXTENSIONS = ('ape', 'asf', 'flac', 'm4a', 'mp3', 'mp4', 'ogg')
+
+
+def split_non_digits(text):
+    """Split text into runs of digits, dropping everything else."""
+    parts = []
+    current = ''
+    for char in text:
+        if char.isdigit():
+            current += char
+        elif current:
+            parts.append(current)
+            current = ''
+    if current:
+        parts.append(current)
+    return parts
+
 
 # Metadata tag translations
 
@@ -232,7 +250,7 @@ class Parser():
 #--- DATE AND TIME -----------------------------------------------------------#
     def __get_exif_date(self, path, tag):
         ext = os.path.splitext(path)[1][1:].lower()
-        if re.match('tif|tiff|jpg|jpeg|jtif|thm', ext, re.IGNORECASE):
+        if ext.startswith(IMAGE_EXTENSIONS):
             try:
                 file = open(path, 'rb')
             except IOError:
@@ -243,8 +261,8 @@ class Parser():
                 if tag in tags:
                     try:
                         itemDateTime = str(tags[tag])
-                        itemDateTime = re.compile(r'\D').split(itemDateTime)
-                        itemDateTime = map(int, itemDateTime)
+                        itemDateTime = split_non_digits(itemDateTime)
+                        itemDateTime = list(map(int, itemDateTime))
                     except ValueError as err:
                         self.__add_to_warnings(path, _(u"Exif error: %s") % err)
                         return False
@@ -403,8 +421,8 @@ class Parser():
         # any text in between this character will be considered an operation:
         text = text.strip(u':').split(u':')
 
-        isImage = re.match('tif|tiff|jpg|jpeg|jtif|thm', ext, re.IGNORECASE)
-        isAudio = re.match('ape|asf|flac|m4a|mp3|mp4|ogg', ext, re.IGNORECASE)
+        isImage = ext.startswith(IMAGE_EXTENSIONS)
+        isAudio = ext.startswith(AUDIO_EXTENSIONS)
         audioMetadata = False
 
         # process here to load Exif metadata only once

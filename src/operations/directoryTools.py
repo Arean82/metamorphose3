@@ -13,7 +13,6 @@
 # GNU General Public License for more details.
 
 import os
-import re
 
 from . import opButtons
 import utils
@@ -69,7 +68,7 @@ class Panel(wx.Panel):
 
         self.browse = wx.Button(id=wxID_BROWSE, label=_(u"Browse"),
                                 name=u'browse', parent=self, style=0)
-        self.browse.SetToolTipString(_(u"Browse for path"))
+        self.browse.SetToolTip(_(u"Browse for path"))
         self.browse.Bind(wx.EVT_BUTTON, self.browse_for_dir,
                          id=wxID_BROWSE)
 
@@ -84,7 +83,7 @@ class Panel(wx.Panel):
         self.addCurrent = wx.Button(id=wxID_ADDCURRENT,
                                     label=_(u"Copy Path Structure"), name=u'addCurrent', parent=self,
                                     style=0)
-        self.addCurrent.SetToolTipString(_(u"For best results, use with absolute paths."))
+        self.addCurrent.SetToolTip(_(u"For best results, use with absolute paths."))
         self.addCurrent.Bind(wx.EVT_BUTTON, self.on_add_current_button,
                              id=wxID_ADDCURRENT)
 
@@ -98,7 +97,7 @@ class Panel(wx.Panel):
                                      min=-255, name=u'pathRecur', parent=self, size=wx.Size(65, -1),
                                      style=wx.SP_ARROW_KEYS | wx.TE_PROCESS_ENTER, value='1')
         self.pathRecur.SetValue(1)
-        self.pathRecur.SetToolTipString(_(u"Negative values allowed"))
+        self.pathRecur.SetToolTip(_(u"Negative values allowed"))
         self.pathRecur.Bind(wx.EVT_TEXT_ENTER, main.show_preview,
                             id=wxID_PATHRECUR)
         self.pathRecur.Bind(wx.EVT_SPINCTRL, main.show_preview,
@@ -106,26 +105,26 @@ class Panel(wx.Panel):
 
         self.inverse = wx.CheckBox(id=wxID_INVERSE, label=_(u"inverse"),
                                    name=u'inverse', parent=self, style=0)
-        self.inverse.SetToolTipString(_(u"Start from begining or end of path"))
+        self.inverse.SetToolTip(_(u"Start from begining or end of path"))
         self.inverse.SetValue(False)
         self.inverse.Bind(wx.EVT_CHECKBOX, main.show_preview)
 
         self.addByFileName = wx.Button(id=wxID_ADDBYFILENAME,
                                        label=_(u"Copy File Name"), name=u'addByFileName', parent=self,
                                        style=0)
-        self.addByFileName.SetToolTipString(_(u"Add a directory with the same name as the file."))
+        self.addByFileName.SetToolTip(_(u"Add a directory with the same name as the file."))
         self.addByFileName.Bind(wx.EVT_BUTTON, self.on_add_by_filename_button,
                                 id=wxID_ADDBYFILENAME)
 
         self.useFileName = wx.CheckBox(id=wxID_USEFILENAME, label=_(u"Name"),
                                        name=u'inverse', parent=self, style=0)
-        self.useFileName.SetToolTipString(_(u"Add the file name"))
+        self.useFileName.SetToolTip(_(u"Add the file name"))
         self.useFileName.SetValue(True)
         self.useFileName.Bind(wx.EVT_CHECKBOX, main.show_preview)
 
         self.useFileExt = wx.CheckBox(id=wxID_USEFILEEXT, label=_(u"Extension"),
                                       name=u'useFileExt', parent=self, style=0)
-        self.useFileExt.SetToolTipString(_(u"Add the file extension"))
+        self.useFileExt.SetToolTip(_(u"Add the file extension"))
         self.useFileExt.SetValue(False)
         self.useFileExt.Bind(wx.EVT_CHECKBOX, main.show_preview)
 
@@ -197,24 +196,31 @@ class Panel(wx.Panel):
     -- Dmitry Borysov
     """
 
-    def fix_separator(self):
-        """fix/detect separator issuesfix/detect separator issues."""
-        # remove dupe path seperators and make sure
-        # only valid path seperators are used
+    def separator_chars(self):
+        """Return the separator to keep and the one to replace."""
         if os.sep == "/":
-            pattern = r"(\\{1,})|(\/{2,})"
-            repl = "/"
-        else:
-            pattern = r"(\\{2,})|(\/{1,})"
-            repl = r"\\"
-        return pattern, repl
+            return "/", "\\"
+        return "\\", "/"
+
+    def normalise_separators(self, path):
+        """Replace foreign separators and collapse duplicated ones."""
+        keep, replace = self.separator_chars()
+        text = "".join(keep if char == replace else char for char in path)
+        doubled = keep + keep
+        while doubled in text:
+            text = text.replace(doubled, keep)
+        return text
+
+    def has_bad_separators(self, path):
+        """True when the path uses a foreign separator or repeats one."""
+        keep, replace = self.separator_chars()
+        return replace in path or (keep + keep) in path
 
     # user presses enter, errors fixed
     def correct_path_enter(self, event):
         path = self.directoryText.GetValue()
-        pattern, replacement = self.fix_separator()
         # fix
-        newpath = re.sub(pattern, replacement, path)
+        newpath = self.normalise_separators(path)
         self.directoryText.SetValue(newpath)
         self.directoryText.SetInsertionPointEnd()
         self.staticText3.Show(False)
@@ -226,9 +232,8 @@ class Panel(wx.Panel):
     # user types, warning shown
     def correct_path_type(self, event):
         path = self.directoryText.GetValue()
-        pattern, replacement = self.fix_separator()
         # warn
-        if re.search(pattern, path):
+        if self.has_bad_separators(path):
             err = _(u"Incorrect path separator")
             self.staticText3.SetLabel(_(u"%s - press ENTER to fix") % err)
             utils.set_min_size(self.staticText3, 0)
