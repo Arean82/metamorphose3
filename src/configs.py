@@ -25,6 +25,7 @@ from xml.sax.saxutils import escape
 from xml.sax.saxutils import unescape
 
 import app
+import db
 import operations
 import utils
 import wx
@@ -45,7 +46,11 @@ def save(main):
         if cfgFileExt != '.cfg':
             cfgFilePath = cfgFilePath + '.cfg'
         # create and write the file
-        utils.write_file(cfgFilePath, SaveConfig(main).cfgFile)
+        cfg_content = SaveConfig(main).cfgFile
+        utils.write_file(cfgFilePath, cfg_content)
+        # Also store to unified SQLite database
+        preset_name = path.splitext(path.basename(cfgFilePath))[0]
+        db.get_db().save_preset(preset_name, cfg_content)
     dlg.Destroy()
 
 

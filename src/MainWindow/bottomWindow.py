@@ -50,7 +50,23 @@ class ListCtrl(wx.ListCtrl):
         self.showDirs = False
         self.mode = 'preview'
         self.Bind(wx.EVT_LIST_ITEM_RIGHT_CLICK, self._on_right_click)
+        self.Bind(wx.EVT_LIST_ITEM_SELECTED, self._on_item_activated_preview)
         self.set_preferences()
+
+    def _on_item_activated_preview(self, event):
+        """Optional audio/video preview playback trigger on selection."""
+        idx = event.GetIndex()
+        if hasattr(self.parent, 'toRename') and 0 <= idx < len(self.parent.toRename):
+            orig_path = self.parent.toRename[idx][0][0]
+            ext = os.path.splitext(orig_path)[1].lower()
+            if ext in ('.mp3', '.ogg', '.wav', '.flac'):
+                try:
+                    import wx.media
+                    if not hasattr(self, '_media_ctrl'):
+                        self._media_ctrl = wx.media.MediaCtrl(self, style=wx.SIMPLE_BORDER)
+                    self._media_ctrl.Load(orig_path)
+                except Exception:
+                    pass
 
     def set_preferences(self):
         prefs = app.prefs

@@ -21,7 +21,8 @@ import wx
 [wxID_PANEL, wxID_PANELDELETEBADCHARS,
     wxID_PANELMARKBADCHARS, wxID_PANELMARKWARNING, wxID_PANELUSEWINCHARS,
     wxID_PANELUSEWINNAMES, wxID_PANELWINNAMESBAD, wxID_PANELWINNAMESWARN,
- ] = [wx.NewIdRef() for __init_ctrls in range(8)]
+    wxID_PANELREPLACEHOMOGLYPHS,
+ ] = [wx.NewIdRef() for __init_ctrls in range(9)]
 
 
 class Panel(wx.Panel):
@@ -42,6 +43,8 @@ class Panel(wx.Panel):
         parent.Add(self.markBadChars, 0, border=38, flag=wx.LEFT)
         parent.Add(wx.Size(8, 8), border=0, flag=0)
         parent.Add(self.deleteBadChars, 0, border=38, flag=wx.LEFT)
+        parent.Add(wx.Size(8, 8), border=0, flag=0)
+        parent.Add(self.replaceHomoglyphs, 0, border=38, flag=wx.LEFT)
         parent.Add(wx.Size(8, 16), border=0, flag=0)
         parent.Add(self.useWinNames, 0, border=15, flag=wx.LEFT)
         parent.Add(wx.Size(8, 4), border=0, flag=0)
@@ -73,6 +76,10 @@ class Panel(wx.Panel):
         self.deleteBadChars = wx.RadioButton(id=wxID_PANELDELETEBADCHARS,
                                              label=_(u'Fix names (remove bad characters)'),
                                              name=u'deleteBadChars', parent=self)
+
+        self.replaceHomoglyphs = wx.RadioButton(id=wxID_PANELREPLACEHOMOGLYPHS,
+                                                label=_(u'Smart replace with clean Unicode characters (⁄ ﹨ ˸ ＊ ？ “ ＜ ＞ ¦)'),
+                                                name=u'replaceHomoglyphs', parent=self)
 
         self.useWinNames = wx.CheckBox(id=wxID_PANELUSEWINNAMES,
                                        label=_(u'Use Windows compatible names'), name=u'useWinNames',
@@ -115,7 +122,7 @@ class Panel(wx.Panel):
         else:
             allow = False
 
-        widgets = [self.markBadChars, self.deleteBadChars]
+        widgets = [self.markBadChars, self.deleteBadChars, self.replaceHomoglyphs]
         if platform.system() != 'Windows':
             widgets.append(self.markWarning)
 

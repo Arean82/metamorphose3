@@ -14,7 +14,8 @@ wxPython>=4.2.0,<5.0.0
 Pillow>=9.0.0,<13.0.0
 
 # =============================================================================
-# Metadata Extraction (image EXIF & audio tags)
+# Metadata Extraction (image EXIF, audio tags & optional video info)
 # =============================================================================
 exifread>=3.0.0,<4.0.0
 mutagen>=1.45.0,<2.0.0
+pymediainfo>=6.0.0,<7.0.0

@@ -50,12 +50,94 @@ from mutagen.trueaudio import TrueAudio
 from mutagen.wavpack import WavPack
 from . import roman
 import utils
+import video_meta
 
 IMAGE_EXTENSIONS = ('tif', 'tiff', 'jpg', 'jpeg', 'jtif', 'thm')
-AUDIO_EXTENSIONS = ('ape', 'asf', 'flac', 'm4a', 'mp3', 'mp4', 'ogg')
+AUDIO_EXTENSIONS = ('ape', 'asf', 'flac', 'm4a', 'mp3', 'ogg')
+VIDEO_EXTENSIONS = ('mp4', 'mkv', 'avi', 'mov', 'wmv', 'flv', 'webm', 'm4v', 'mpg', 'mpeg', 'ts')
+PDF_EXTENSIONS = ('pdf',)
+
+PDF_INFO = {
+    _('pdf title'): 'title',
+    _('pdf author'): 'author',
+    _('pdf subject'): 'subject',
+}
+
+def read_pdf_metadata(filepath):
+    """Pure-python lightweight PDF trailer / Info dict parser."""
+    meta = {}
+    try:
+        with open(filepath, 'rb') as f:
+            content = f.read()
+            info_idx = content.rfind(b'/Info')
+            if info_idx != -1:
+                chunk = content[info_idx:info_idx + 1024].decode('latin-1', 'ignore')
+                import re
+                t_match = re.search(r'/Title\s*\(([^)]+)\)', chunk)
+                if t_match:
+                    meta['title'] = t_match.group(1)
+                a_match = re.search(r'/Author\s*\(([^)]+)\)', chunk)
+                if a_match:
+                    meta['author'] = a_match.group(1)
+                s_match = re.search(r'/Subject\s*\(([^)]+)\)', chunk)
+                if s_match:
+                    meta['subject'] = s_match.group(1)
+    except Exception:
+        pass
+    return meta
+
+VIDEO_INFO = {
+    _('duration'): 'duration',
+    _('video width'): 'width',
+    _('video height'): 'height',
+    _('video codec'): 'videocodec',
+    _('audio codec'): 'audiocodec',
+    _('frame rate'): 'framerate',
+}
 
 
 def split_non_digits(text):
+    """Split text into runs of digits, dropping everything else."""
+    parts = []
+    current = ''
+    for char in text:
+        if char.isdigit():
+            current += char
+        elif current:
+            parts.append(current)
+            current = ''
+    if current:
+        parts.append(current)
+    return parts
+
+def write_audio_tag(filepath, tag_name, value):
+    """Write updated metadata tag directly back into audio file header."""
+    if not os.path.isfile(filepath):
+        return False
+    ext = os.path.splitext(filepath)[1].lower()
+    try:
+        if ext == '.mp3':
+            from mutagen.easyid3 import EasyID3
+            audio = EasyID3(filepath)
+            audio[tag_name] = [str(value)]
+            audio.save()
+            return True
+        elif ext in ('.flac', '.ogg'):
+            from mutagen import File
+            audio = File(filepath)
+            if audio is not None:
+                audio[tag_name] = [str(value)]
+                audio.save()
+                return True
+        elif ext in ('.m4a', '.mp4'):
+            from mutagen.easymp4 import EasyMP4
+            audio = EasyMP4(filepath)
+            audio[tag_name] = [str(value)]
+            audio.save()
+            return True
+    except Exception:
+        pass
+    return False
     """Split text into runs of digits, dropping everything else."""
     parts = []
     current = ''
@@ -89,6 +171,8 @@ AUDIO_INFO = {
     _('language'): "language",
     _('encoded by'): "encodedby",
     _('comment'): 'comment',
+    _('bitrate'): 'bitrate',
+    _('sample rate'): 'samplerate',
 }
 
 IMAGE_INFO = {
@@ -102,6 +186,7 @@ IMAGE_INFO = {
     _(u"focal-length"): u"EXIF FocalLength",
     _(u"ISO"): u"EXIF ISOSpeedRatings",
     _(u"shutter-speed"): u"EXIF ShutterSpeedValue",
+    _(u"aperture"): u"EXIF ApertureValue",
     _(u"copyright"): u"Image Copyright",
     _(u"make"): u"Image Make",
     _(u"model"): u"Image Model",
@@ -385,6 +470,16 @@ class Parser():
     def __get_audio_tag(self, audioMetadata, command):
         tag = AUDIO_INFO[command]
         path = audioMetadata.filename
+        if tag == "bitrate":
+            info = getattr(audioMetadata, 'info', None)
+            if info and getattr(info, 'bitrate', None):
+                return str(int(info.bitrate // 1000)) + "k"
+            return False
+        if tag == "samplerate":
+            info = getattr(audioMetadata, 'info', None)
+            if info and getattr(info, 'sample_rate', None):
+                return str(info.sample_rate)
+            return False
         if tag in audioMetadata:
             value = audioMetadata[tag][0]
             encoding = app.prefs.get('encodingSelect')
@@ -422,28 +517,57 @@ class Parser():
         # Exif
         for i in IMAGE_INFO.keys():
             commands.append(i)
+        imageInfoEnd = len(commands)
+
+        # Video
+        for i in VIDEO_INFO.keys():
+            commands.append(i)
+        videoInfoEnd = len(commands)
+
+        # PDF
+        for i in PDF_INFO.keys():
+            commands.append(i)
 
         parsedText = u''
 
         # any text in between this character will be considered an operation:
         text = text.strip(u':').split(u':')
 
-        isImage = ext.startswith(IMAGE_EXTENSIONS)
-        isAudio = ext.startswith(AUDIO_EXTENSIONS)
+        isImage = ext.lower().startswith(IMAGE_EXTENSIONS)
+        isAudio = ext.lower().startswith(AUDIO_EXTENSIONS)
+        isVideo = ext.lower().startswith(VIDEO_EXTENSIONS)
+        isPdf = ext.lower().startswith(PDF_EXTENSIONS)
         audioMetadata = False
+        videoMetadata = False
+        pdfMetadata = False
 
         # process here to load Exif metadata only once
         if isImage:
             for segment in text:
-                if segment in commands[10:]:
-                    file_rb = open(file, 'rb')
-                    imageMetadata = EXIF.process_file(file_rb, details=False)
+                if segment in commands[audioInfoEnd:imageInfoEnd]:
+                    try:
+                        with open(file, 'rb') as file_rb:
+                            imageMetadata = EXIF.process_file(file_rb, details=False)
+                    except OSError:
+                        imageMetadata = {}
                     break
         # process here to load audio metadata only once
         elif isAudio:
             for segment in text:
                 if segment in commands[audioInfoStart:audioInfoEnd]:
                     audioMetadata = self.__get_audio_metadata(file)
+                    break
+        # process here to load video metadata only once
+        elif isVideo:
+            for segment in text:
+                if segment in commands[imageInfoEnd:videoInfoEnd]:
+                    videoMetadata = video_meta.read_video_metadata(file)
+                    break
+        # process here to load pdf metadata only once
+        elif isPdf:
+            for segment in text:
+                if segment in commands[videoInfoEnd:]:
+                    pdfMetadata = read_pdf_metadata(file)
                     break
         # execute functions based on user input:
         for segment in text:
@@ -464,8 +588,16 @@ class Parser():
             elif isAudio and audioMetadata and segment in commands[audioInfoStart:audioInfoEnd]:
                 value = self.__get_audio_tag(audioMetadata, segment)
             # EXIF
-            elif isImage and segment in commands[audioInfoEnd + 1:]:
+            elif isImage and segment in commands[audioInfoEnd:imageInfoEnd]:
                 value = self.__get_image_tag(file, imageMetadata, segment)
+            # Video
+            elif isVideo and videoMetadata and segment in commands[imageInfoEnd:videoInfoEnd]:
+                tag_key = VIDEO_INFO.get(segment)
+                value = videoMetadata.get(tag_key, '')
+            # PDF
+            elif isPdf and pdfMetadata and segment in commands[videoInfoEnd:]:
+                tag_key = PDF_INFO.get(segment)
+                value = pdfMetadata.get(tag_key, '')
             # if segment doesn't match a command, reprint segment:
             else:
                 parsedText += segment

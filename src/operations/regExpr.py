@@ -14,12 +14,15 @@
 
 import re
 
+from . import shorthand
+import db
 import wx
 
 [wxID_PANEL, wxID_PANELA_Z, wxID_PANELDIGIT,
     wxID_PANELREG_EXPR, wxID_PANELREG_EXP_DIV,
     wxID_PANELREG_EXP_I, wxID_PANELREG_EXP_U,
- ] = [wx.NewIdRef() for __init_ctrls in range(7)]
+    wxID_PANELSHORTHAND_NUM, wxID_PANELSHORTHAND_LETTERS,
+ ] = [wx.NewIdRef() for __init_ctrls in range(9)]
 
 
 class Panel(wx.Panel):
@@ -34,8 +37,10 @@ class Panel(wx.Panel):
         regExprSizer.Add(self.regExpDiv, 0, wx.ALIGN_CENTER | wx.LEFT | wx.RIGHT, 3)
         regExprSizer.Add((0, 0), 1)
         regExprSizer.Add(self.aToZ, 0, wx.ALIGN_CENTER | wx.RIGHT, 5)
-        regExprSizer.Add(self.digit, 0, wx.ALIGN_CENTER)
-        regExprSizer.Add((0, 0), 60)
+        regExprSizer.Add(self.digit, 0, wx.ALIGN_CENTER | wx.RIGHT, 5)
+        regExprSizer.Add(self.btnShorthandNum, 0, wx.ALIGN_CENTER | wx.RIGHT, 5)
+        regExprSizer.Add(self.btnShorthandLetters, 0, wx.ALIGN_CENTER)
+        regExprSizer.Add((0, 0), 20)
         self.SetSizerAndFit(regExprSizer)
         #mainSizer.Add(regExprSizer,0,wx.EXPAND|wx.TOP,5)
 
@@ -80,6 +85,18 @@ class Panel(wx.Panel):
         self.digit.Enable(False)
         self.digit.Bind(wx.EVT_BUTTON, self._add_regex_buttons)
 
+        self.btnShorthandNum = wx.Button(id=wxID_PANELSHORTHAND_NUM, label=_(u"{#}"),
+                                         name=u'btnShorthandNum', parent=self, style=wx.BU_EXACTFIT)
+        self.btnShorthandNum.SetToolTip(_(u"Shorthand for numbers/digits run"))
+        self.btnShorthandNum.Enable(False)
+        self.btnShorthandNum.Bind(wx.EVT_BUTTON, self._add_regex_buttons)
+
+        self.btnShorthandLetters = wx.Button(id=wxID_PANELSHORTHAND_LETTERS, label=_(u"{L}"),
+                                             name=u'btnShorthandLetters', parent=self, style=wx.BU_EXACTFIT)
+        self.btnShorthandLetters.SetToolTip(_(u"Shorthand for letter characters"))
+        self.btnShorthandLetters.Enable(False)
+        self.btnShorthandLetters.Bind(wx.EVT_BUTTON, self._add_regex_buttons)
+
     def __init__(self, parent, main_window, name=u'regExpPanel'):
         global main
         main = main_window
@@ -93,6 +110,10 @@ class Panel(wx.Panel):
             txt = r"[^\W\d]"
         elif event.GetId() == wxID_PANELDIGIT:
             txt = r"\d"
+        elif event.GetId() == wxID_PANELSHORTHAND_NUM:
+            txt = r"{#}"
+        elif event.GetId() == wxID_PANELSHORTHAND_LETTERS:
+            txt = r"{L}"
         activatedField = self.activatedField
 
         iPoint = activatedField.GetInsertionPoint()
@@ -103,7 +124,8 @@ class Panel(wx.Panel):
     def set_active(self, activate):
         """Set active widgets."""
         reg_exp_tup = (self.iRegExpr, self.uRegExpr,
-                       self.aToZ, self.digit)
+                       self.aToZ, self.digit,
+                       self.btnShorthandNum, self.btnShorthandLetters)
         for option in reg_exp_tup:
             option.Enable(activate)
 
@@ -111,11 +133,41 @@ class Panel(wx.Panel):
         """Find focused text field."""
         self.activatedField = event.GetEventObject()
 
+    def test_regex_sandbox(self, sample_text, pattern=None, case_sensitive=True):
+        """Interactive regex tester: returns matches, groups, and status."""
+        pattern = pattern or (getattr(self.parent, 'find', None) and self.parent.find.GetValue()) or ''
+        if shorthand.is_shorthand_pattern(pattern):
+            pattern = shorthand.shorthand_to_regex(pattern)
+        flags = 0 if case_sensitive else re.IGNORECASE
+        try:
+            regex = re.compile(pattern, flags)
+            matches = []
+            for m in regex.finditer(sample_text):
+                matches.append({
+                    'span': m.span(),
+                    'match': m.group(0),
+                    'groups': m.groups(),
+                })
+            return {'valid': True, 'pattern': pattern, 'matches': matches, 'error': None}
+        except re.error as e:
+            return {'valid': False, 'pattern': pattern, 'matches': [], 'error': str(e)}
+
     def create_regex(self, REfind):
-        """Compile regular expression."""
+        """Compile regular expression (supporting shorthand tokens)."""
         self.parent.REmsg = False
         caseSensitive = self.iRegExpr.GetValue()
         useUnicode = self.uRegExpr.GetValue()
+
+        # If shorthand tokens like {#}, {L}, {C}, {X}, {@} are present, translate them
+        raw_find = REfind
+        if shorthand.is_shorthand_pattern(REfind):
+            REfind = shorthand.shorthand_to_regex(REfind)
+
+        # Record pattern to history in SQLite database
+        try:
+            db.get_db().record_pattern(raw_find, "search")
+        except Exception:
+            pass
         try:
             # compile according to options
             if not caseSensitive and useUnicode:

@@ -22,6 +22,7 @@ from .dialog import Dialog
 from . import display
 from . import errorCheck
 from . import general
+import db
 import utils
 import sys
 import wx
@@ -120,6 +121,18 @@ class Methods:
         prefs[u'highlightColor'] = wx.SystemSettings.GetColour(wx.SYS_COLOUR_HIGHLIGHT)
         prefs[u'highlightTextColor'] = wx.SystemSettings.GetColour(wx.SYS_COLOUR_HIGHLIGHTTEXT)
         prefs[u'textColor'] = wx.SystemSettings.GetColour(wx.SYS_COLOUR_WINDOWTEXT)
+
+        # Sync to SQLite database for durable atomic storage
+        try:
+            database = db.get_db()
+            db_settings = {}
+            for k, v in prefs.items():
+                if isinstance(v, (int, str, float, bool)):
+                    db_settings[k] = v
+            database.set_many_settings(db_settings)
+        except Exception as e:
+            app.debug_print("SQLite sync error: %s" % e)
+
         app.debug_print("Loaded %s preferences" % len(prefs))
         self.prefs = prefs
 

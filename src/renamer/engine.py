@@ -21,6 +21,7 @@ import time
 import app
 import classes
 import shutil
+import sidecar
 import utils
 
 
@@ -81,6 +82,17 @@ class Core():
         # set item as renamed
         main.toRename[i][1][1] = True
 
+        # Synchronize and rename any accompanying sidecar files (.xmp, .srt, .nfo)
+        try:
+            for sc in sidecar.find_sidecars(original[0]):
+                sc_target = sidecar.get_sidecar_new_name(renamed[0], sc)
+                if sc != sc_target:
+                    shutil.move(sc, sc_target)
+                    self.undoFile.write(sc_target + u'\n')
+                    self.originalFile.write(sc + u'\n')
+        except Exception as e_sc:
+            app.debug_print("Sidecar sync error: %s" % e_sc)
+
         # refresh based on user settings
         if i % refresh_int == 0:
             self._set_display(i)
@@ -117,6 +129,39 @@ class Core():
         warn = False
         if event != u'undo':
             path = main.picker.params.root
+
+        # Handle duplicate target collision auto-resolution (auto-suffix _1, _2...)
+        target_seen = {}
+        for idx in range(len(main.toRename)):
+            orig_p = main.toRename[idx][0][0]
+            ren_p = main.toRename[idx][1][0]
+            if ren_p in target_seen:
+                base, ext = os.path.splitext(ren_p)
+                count_suffix = target_seen[ren_p]
+                new_ren_p = f"{base}_{count_suffix}{ext}"
+                target_seen[ren_p] += 1
+                target_seen[new_ren_p] = 1
+                main.toRename[idx][1][0] = new_ren_p
+            else:
+                target_seen[ren_p] = 1
+
+        # Cycle Resolution: detect circular or case-only collisions and stage via UUID temporary files
+        import uuid
+        rename_map = {orig[0]: ren[0] for orig, ren in main.toRename}
+        source_set = set(rename_map.keys())
+        staged_intermediates = {}
+        for idx in range(len(main.toRename)):
+            orig_p = main.toRename[idx][0][0]
+            ren_p = main.toRename[idx][1][0]
+            # If target name is also a source name of another file, or case-only rename
+            if (ren_p in source_set and ren_p != orig_p) or (orig_p.lower() == ren_p.lower() and orig_p != ren_p):
+                temp_p = os.path.join(os.path.dirname(orig_p), f".meta_tmp_{uuid.uuid4().hex[:8]}_{os.path.basename(orig_p)}")
+                try:
+                    os.rename(orig_p, temp_p)
+                    staged_intermediates[temp_p] = ren_p
+                    main.toRename[idx][0][0] = temp_p
+                except OSError:
+                    pass
 
         # renaming operation:
         i = 0

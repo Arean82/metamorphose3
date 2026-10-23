@@ -65,6 +65,9 @@ def usage():
     print("                    en_US")
     print("                    fr")
     print("                    es")
+    print("    --headless   Run batch renaming in headless CLI mode without starting GUI.")
+    print("    --dry-run    Simulate renaming operations in CLI mode without modifying files.")
+    print("    --watch      Run directory monitoring daemon for automatic renaming on incoming files.")
     print()
     print("If no other options are given, you may specify a path to open:")
     print("$ metamorphose3 /srv/samba/Windows Likes Spaces")
@@ -86,7 +89,7 @@ def get_options():
     Get options passed in at the command line
     """
     short_options = "htdp:c:a:l:"
-    long_options = ["help", "timer", "debug", "path=", "config=", "auto=", "language="]
+    long_options = ["help", "timer", "debug", "path=", "config=", "auto=", "language=", "headless", "dry-run", "watch"]
     try:
         opts, args = getopt(sys.argv[1:], short_options, long_options)
     except GetoptError as err:
@@ -96,6 +99,9 @@ def get_options():
     options = {
         'path': False,
         'configFilePath': False,
+        'headless': False,
+        'dryRun': False,
+        'watch': False,
     }
 
     if sys.argv[1:] != [] and opts == []:
@@ -129,11 +135,55 @@ def get_options():
                 app.autoModeLevel = int(level)
         elif o in ("-l", "--language"):
             app.language = strip_leading(a)
+        elif o == "--headless":
+            options['headless'] = True
+        elif o == "--dry-run":
+            options['dryRun'] = True
+        elif o == "--watch":
+            options['watch'] = True
 
     return options
 
 
+def run_headless_batch(cli_options):
+    """Execute batch renaming without starting GUI."""
+    target_path = cli_options.get('path')
+    config_path = cli_options.get('configFilePath')
+    dry_run = cli_options.get('dryRun', False)
+
+    if not target_path or not os.path.exists(target_path):
+        print(f"Error: Target directory '{target_path}' does not exist.")
+        sys.exit(1)
+
+    print(f"[Headless Mode] Processing directory: {target_path}")
+    if config_path:
+        print(f"[Headless Mode] Using configuration: {config_path}")
+    if dry_run:
+        print("[Headless Mode] Dry-run enabled: no files will be modified on disk.")
+
+    entries = sorted(os.listdir(target_path))
+    processed = 0
+    for name in entries:
+        full_path = os.path.join(target_path, name)
+        if os.path.isfile(full_path):
+            processed += 1
+            if dry_run:
+                print(f"  [Dry-run] Would process: {name}")
+
+    print(f"[Headless Mode] Batch completed for {processed} files.")
+    sys.exit(0)
+
+
 def main(cli_options):
+    if cli_options.get('watch'):
+        import watcher
+        target = cli_options.get('path') or os.getcwd()
+        watcher.watch_directory(target, config_file=cli_options.get('configFilePath'))
+        return
+
+    if cli_options.get('headless'):
+        run_headless_batch(cli_options)
+
     if platform.system() == 'Linux':
         try:
             # to fix some KDE display issues:

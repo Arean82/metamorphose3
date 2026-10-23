@@ -27,6 +27,7 @@ import time
 from . import EnhancedStatusBar as ESB
 import about
 import app
+import bookmarks
 import classes
 import errors
 import helpDiag
@@ -61,8 +62,8 @@ wxID_MENUPICKER_WALK, wxID_MENUPICKER_BROWSE,
 wxID_MENUPICKER_OK,
 
 wxID_MENUSETTINGS_PREFERENCES, wxID_MENUSETTINGS_LANG,
-
- ] = [wx.NewIdRef() for __init_menu_edit in range(27)]
+wxID_MENUBOOKMARKS_BASE,
+ ] = [wx.NewIdRef() for __init_menu_edit in range(28)]
 
 
 class MySplitter(wx.SplitterWindow):
@@ -79,6 +80,7 @@ class MainWindow(wx.Frame):
     def __init_menubar(self, parent):
         parent.Append(menu=self.menuFile, title=_(u"File"))
         parent.Append(menu=self.menuPicker, title=_(u"Picker"))
+        parent.Append(menu=self.menuBookmarks, title=_(u"Bookmarks"))
         parent.Append(menu=self.menuRenamer, title=_(u"Renamer"))
         parent.Append(menu=self.menuEdit, title=_(u"Settings"))
         parent.Append(menu=self.menuHelp, title=_(u"Help"))
@@ -227,6 +229,55 @@ class MainWindow(wx.Frame):
         self.Bind(wx.EVT_MENU, self.picker.walk_from_menu,
                   id=wxID_MENUPICKER_WALK)
 
+    def __init_menu_bookmarks(self, parent):
+        self._bookmark_paths = {}
+
+        # Add current path
+        add_curr = parent.Append(wx.ID_ANY, _(u"Bookmark Current Directory"),
+                                 self.make_space(_(u"Save current directory to bookmarks")))
+        self.Bind(wx.EVT_MENU, self._on_bookmark_current, add_curr)
+        parent.AppendSeparator()
+
+        # User Bookmarks
+        user_bm = bookmarks.get_user_bookmarks()
+        if user_bm:
+            for name, path in user_bm:
+                item = parent.Append(wx.ID_ANY, name, path)
+                self._bookmark_paths[item.GetId()] = path
+                self.Bind(wx.EVT_MENU, self._on_open_bookmark, item)
+            parent.AppendSeparator()
+
+        # System / GTK Bookmarks
+        sys_bm = bookmarks.get_gtk_bookmarks()
+        if sys_bm:
+            gtk_menu = wx.Menu()
+            for name, path in sys_bm:
+                item = gtk_menu.Append(wx.ID_ANY, name, path)
+                self._bookmark_paths[item.GetId()] = path
+                self.Bind(wx.EVT_MENU, self._on_open_bookmark, item)
+            parent.AppendSubMenu(gtk_menu, _(u"System Bookmarks"))
+
+        # Standard Locations
+        std_menu = wx.Menu()
+        for name, path in bookmarks.get_standard_locations():
+            item = std_menu.Append(wx.ID_ANY, name, path)
+            self._bookmark_paths[item.GetId()] = path
+            self.Bind(wx.EVT_MENU, self._on_open_bookmark, item)
+        parent.AppendSubMenu(std_menu, _(u"Standard Locations"))
+
+    def _on_bookmark_current(self, event):
+        path = self.picker.view.path.GetValue()
+        if path and os.path.isdir(path):
+            name = os.path.basename(path) or path
+            bookmarks.add_user_bookmark(name, path)
+            self.set_status_msg(_(u"Bookmarked: %s") % name, u'eyes')
+
+    def _on_open_bookmark(self, event):
+        path = self._bookmark_paths.get(event.GetId())
+        if path and os.path.isdir(path):
+            self.picker.view.path.SetValue(path)
+            self.picker.view.display_files(path)
+
     def __init_menu_edit(self, parent):
         parent.PrefsMenu = wx.MenuItem(parent,
                                        wxID_MENUSETTINGS_PREFERENCES, _(u"Preferences"),
@@ -244,10 +295,26 @@ class MainWindow(wx.Frame):
                                   utils.icon_path(u'language.png'), wx.BITMAP_TYPE_PNG))
         parent.Append(parent.langMenu)
 
+        parent.AppendSeparator()
+
+        self.contextMenuCheck = parent.AppendCheckItem(wx.NewIdRef(), _(u"Enable Context Menu Integration"),
+                                                       _(u"Add 'Open in Métamorphose 3' to file manager right-click menu"))
+        self.contextMenuCheck.Check(utils.is_context_menu_enabled())
+        self.Bind(wx.EVT_MENU, self._on_toggle_context_menu, self.contextMenuCheck)
+
         self.Bind(wx.EVT_MENU, self.show_preferences,
                   id=wxID_MENUSETTINGS_PREFERENCES)
         self.Bind(wx.EVT_MENU, self.language_select,
                   id=wxID_MENUSETTINGS_LANG)
+
+    def _on_toggle_context_menu(self, event):
+        enabled = self.contextMenuCheck.IsChecked()
+        success = utils.set_context_menu_enabled(enabled)
+        if success:
+            state_str = _(u"enabled") if enabled else _(u"disabled")
+            self.set_status_msg(_(u"Context menu integration %s") % state_str, u'complete')
+        else:
+            self.set_status_msg(_(u"Failed to update context menu integration"), u'warn')
 
     def __init_menu_help(self, parent):
         parent.aboutMenu = wx.MenuItem(parent,
@@ -332,12 +399,14 @@ class MainWindow(wx.Frame):
     def __init_utils(self):
         self.menuFile = wx.Menu()
         self.menuPicker = wx.Menu()
+        self.menuBookmarks = wx.Menu()
         self.menuEdit = wx.Menu()
         self.menuHelp = wx.Menu()
         self.menuBar = wx.MenuBar()
         self.menuRenamer = wx.Menu()
         self.__init_menu_file(self.menuFile)
         self.__init_menu_picker(self.menuPicker)
+        self.__init_menu_bookmarks(self.menuBookmarks)
         self.__init_menu_renamer(self.menuRenamer)
         self.__init_menu_edit(self.menuEdit)
         self.__init_menu_help(self.menuHelp)
@@ -595,6 +664,23 @@ class MainWindow(wx.Frame):
             path = options['path'].rstrip()
             self.picker.view.path.SetValue(path)
             self.picker.set_path(True)
+
+        # Check for crash journal recovery
+        try:
+            import db
+            pending = db.get_db().get_incomplete_journal_items()
+            if pending:
+                msg = _(u"Detected %d uncompleted operations from a previous session.\nWould you like to recover/revert them?") % len(pending)
+                if utils.make_yesno_dlg(msg, _(u"Crash Recovery")):
+                    for b_id, orig, ren, status in reversed(pending):
+                        if os.path.exists(ren) and not os.path.exists(orig):
+                            os.rename(ren, orig)
+                    db.get_db().clear_journal_batch(pending[0][0])
+                    self.set_status_msg(_(u"Recovered %d files from previous session") % len(pending), u'complete')
+                else:
+                    db.get_db().clear_journal_batch(pending[0][0])
+        except Exception:
+            pass
 
 #
 #--- MISC STUFF: ------------------------------------------------------------#

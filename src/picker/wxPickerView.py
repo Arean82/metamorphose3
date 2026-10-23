@@ -40,6 +40,44 @@ except ImportError:
  ] = [wx.NewIdRef() for __init_ctrls in range(23)]
 
 
+class PickerCompositeDropTarget(wx.DropTarget):
+    """Allows dropping external files/folders or internal drag-reordered list items."""
+    def __init__(self, item_list, picker_panel):
+        wx.DropTarget.__init__(self)
+        self.item_list = item_list
+        self.picker_panel = picker_panel
+        self.composite = wx.DataObjectComposite()
+        self.text_data = wx.TextDataObject()
+        self.file_data = wx.FileDataObject()
+        self.composite.Add(self.text_data, False)
+        self.composite.Add(self.file_data, True)
+        self.SetDataObject(self.composite)
+
+    def OnData(self, x, y, default_action):
+        if not self.GetData():
+            return wx.DragNone
+        format = self.composite.GetReceivedFormat()
+        if format.GetType() in (wx.DF_TEXT, wx.DF_UNICODETEXT):
+            text = self.text_data.GetText()
+            try:
+                from_idx = int(text)
+                hit_item, flags = self.item_list.HitTest((x, y))
+                if hit_item != wx.NOT_FOUND and hit_item != from_idx:
+                    self.item_list.move_item(from_idx, hit_item)
+                    return wx.DragMove
+            except ValueError:
+                pass
+        elif format.GetType() == wx.DF_FILENAME:
+            filenames = self.file_data.GetFilenames()
+            if filenames:
+                first = filenames[0]
+                target_dir = first if os.path.isdir(first) else os.path.dirname(first)
+                self.picker_panel.path.SetValue(target_dir)
+                self.picker_panel.display_files(target_dir)
+                return wx.DragCopy
+        return wx.DragNone
+
+
 # Panel refers to instance as dirpicker
 class DirectoryList(wx.GenericDirCtrl):
     def __init__(self, parent, ID, name, showHidden):
@@ -119,9 +157,48 @@ class ItemList(wx.ListCtrl):
         self.Bind(wx.EVT_KEY_DOWN, self.__on_key_down)
         self.Bind(wx.EVT_KEY_UP, self.__on_key_up)
 
+        # Drag-and-drop manual reordering support
+        self.Bind(wx.EVT_LIST_BEGIN_DRAG, self.on_begin_drag)
+        self.dragged_index = None
+
         # keep shift key value
         self.shiftDown = False
         self.totalSelected = 0
+
+        # Enable dragging and dropping folders/files and internal reordering
+        self.SetDropTarget(PickerCompositeDropTarget(self, self.pickerPanel))
+
+    def on_begin_drag(self, event):
+        """Handle start of dragging an item to manually reorder."""
+        self.dragged_index = event.GetIndex()
+        text_data = wx.TextDataObject(str(self.dragged_index))
+        drop_source = wx.DropSource(self)
+        drop_source.SetData(text_data)
+        result = drop_source.DoDragDrop(wx.Drag_DefaultMove)
+        if result in (wx.DragCopy, wx.DragMove):
+            pass
+        self.dragged_index = None
+
+    def move_item(self, from_idx, to_idx):
+        """Move item from from_idx to to_idx in the list and in joinedItems."""
+        if from_idx == to_idx or from_idx < 0 or to_idx < 0:
+            return
+        count = self.GetItemCount()
+        if from_idx >= count or to_idx >= count:
+            return
+
+        text = self.GetItemText(from_idx)
+        img = self.GetItem(from_idx).GetImage()
+        self.DeleteItem(from_idx)
+        self.InsertItem(to_idx, text, img)
+
+        # Sync joinedItems order if present
+        if hasattr(self.pickerPanel, 'Core') and self.pickerPanel.Core.joinedItems:
+            items = self.pickerPanel.Core.joinedItems
+            if 0 <= from_idx < len(items) and 0 <= to_idx < len(items):
+                item = items.pop(from_idx)
+                items.insert(to_idx, item)
+        main.show_preview(True)
 
     def __create_image_list(self, imgPreview):
         # get thumbnail size

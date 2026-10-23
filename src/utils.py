@@ -31,6 +31,30 @@ except ImportError:
     pass
 
 
+import hashlib
+
+
+def compute_file_hash(filepath, algorithm='sha256', chunk_size=65536):
+    """Compute cryptographic hash of a file."""
+    if not os.path.isfile(filepath):
+        return None
+    hasher = hashlib.new(algorithm)
+    try:
+        with open(filepath, 'rb') as f:
+            while chunk := f.read(chunk_size):
+                hasher.update(chunk)
+        return hasher.hexdigest()
+    except Exception:
+        return None
+
+
+def verify_file_checksum(orig_path, renamed_path, algorithm='sha256'):
+    """Verify that original and renamed files have identical contents."""
+    h1 = compute_file_hash(orig_path, algorithm)
+    h2 = compute_file_hash(renamed_path, algorithm)
+    return h1 is not None and h1 == h2
+
+
 def is_pil_loaded():
     """Determine if the python imaging library is loaded."""
     try:
@@ -314,3 +338,44 @@ def get_encoding_choices(key):
             u'euc_jis_2004', u'euc_jisx0213'),
         }
     return encodingLookup[key]
+
+
+def get_context_menu_path():
+    """Return path to user desktop context menu service file."""
+    return os.path.expanduser("~/.local/share/kio/servicemenus/metamorphose3.desktop")
+
+
+def is_context_menu_enabled():
+    """Check if file manager context menu integration is active."""
+    return os.path.isfile(get_context_menu_path())
+
+
+def set_context_menu_enabled(enable=True):
+    """Enable or disable desktop file manager context menu integration."""
+    target_path = get_context_menu_path()
+    if enable:
+        try:
+            os.makedirs(os.path.dirname(target_path), exist_ok=True)
+            content = (
+                "[Desktop Entry]\n"
+                "Type=Service\n"
+                "ServiceTypes=KonqPopupMenu/Plugin,inode/directory\n"
+                "Actions=openInMetamorphose\n"
+                "X-KDE-Priority=TopLevel\n\n"
+                "[Desktop Action openInMetamorphose]\n"
+                "Name=Open in Métamorphose 3\n"
+                "Icon=metamorphose3\n"
+                "Exec=python3 /git/metamorphose3/src/metamorphose3.py -p \"%U\"\n"
+            )
+            with open(target_path, "w", encoding="utf-8") as f:
+                f.write(content)
+            return True
+        except Exception:
+            return False
+    else:
+        try:
+            if os.path.exists(target_path):
+                os.remove(target_path)
+            return True
+        except Exception:
+            return False

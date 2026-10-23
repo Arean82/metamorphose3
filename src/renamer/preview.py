@@ -23,6 +23,7 @@ import time
 
 import app
 import classes
+import sanitizer
 
 
 # preview generator, should not be accessed directly
@@ -131,22 +132,25 @@ class Core():
 
         # remove or flag invalid characters (depends on user settings)
         if self.prefs.get(u'useWinChars'):
-            x = 0
-            for char in self.prefs.get(u'bad_chars'):
-                if self.prefs.get(u'deleteBadChars'):
-                    renamedItem = renamedItem.replace(char, '')
-                elif self.prefs.get(u'markWarning'):
-                    if x < 1 and char in renamedItem:
-                        self.appendErrorLog(ec, itemToRename,
-                                            _(u"Invalid Windows character: %s") % char,
-                                            u'warn')
-                        x += 1
-                elif self.prefs.get(u'markBadChars'):
-                    if x < 1 and char in renamedItem:
-                        self.appendErrorLog(ec, itemToRename,
-                                            _(u"Invalid Windows character: %s") % char,
-                                            u'bad')
-                        x += 1
+            if self.prefs.get(u'replaceHomoglyphs'):
+                renamedItem = sanitizer.sanitize_filename(renamedItem, replace_homoglyphs=True)
+            else:
+                x = 0
+                for char in self.prefs.get(u'bad_chars'):
+                    if self.prefs.get(u'deleteBadChars'):
+                        renamedItem = renamedItem.replace(char, '')
+                    elif self.prefs.get(u'markWarning'):
+                        if x < 1 and char in renamedItem:
+                            self.appendErrorLog(ec, itemToRename,
+                                                _(u"Invalid Windows character: %s") % char,
+                                                u'warn')
+                            x += 1
+                    elif self.prefs.get(u'markBadChars'):
+                        if x < 1 and char in renamedItem:
+                            self.appendErrorLog(ec, itemToRename,
+                                                _(u"Invalid Windows character: %s") % char,
+                                                u'bad')
+                            x += 1
 
         # flag bad win words:
         if self.prefs.get(u'useWinNames'):
@@ -170,9 +174,14 @@ class Core():
                                 _(u"Name length over 255 characters"), u'bad')
 
         # no dupes (must be last error check)
-        if os.path.join(path, renamedItem) in self.items_ren:
+        targetFullPath = os.path.join(path, renamedItem)
+        if targetFullPath in self.items_ren:
             if ec not in bad:
                 self.appendErrorLog(ec, itemToRename, _(u"Duplicate name"), u'bad')
+        elif os.path.exists(targetFullPath) and targetFullPath != itemToRename:
+            # File conflict with an existing file on disk not part of the rename
+            if ec not in bad:
+                self.appendErrorLog(ec, itemToRename, _(u"File conflict with existing item on disk"), u'bad')
 
         #------------ WARNINGS: ---------------#
         # blank file name, but extension is there
@@ -342,6 +351,24 @@ class Core():
         # make new dict with original and renamed files:
         main.toRename = list(zip(main.items, items_ren))
         del items_ren
+
+        # Detect duplicate target names (collision avoidance check)
+        target_counts = {}
+        for original, renamed in main.toRename:
+            target_path = renamed[0]
+            target_counts[target_path] = target_counts.get(target_path, 0) + 1
+
+        for idx, (original, renamed) in enumerate(main.toRename):
+            target_path = renamed[0]
+            orig_path = original[0]
+            if target_counts.get(target_path, 0) > 1:
+                if idx not in main.warn:
+                    main.warn.append(idx)
+                    main.errorLog.insert(0, (idx, orig_path, _(u"Collision detected: multiple files rename to '%s'") % os.path.basename(target_path), u'warn'))
+            elif orig_path != target_path and os.path.exists(target_path):
+                if idx not in main.warn:
+                    main.warn.append(idx)
+                    main.errorLog.insert(0, (idx, orig_path, _(u"Target already exists on disk: '%s'") % os.path.basename(target_path), u'warn'))
 
         main.menuFile.SaveLog.Enable(True)
 

@@ -18,6 +18,21 @@ import utils
 import wx
 
 
+def auto_detect_locale():
+    """Detect operating system language and map to supported languages."""
+    import locale
+    try:
+        loc = locale.getdefaultlocale()[0]
+        if loc:
+            if loc.startswith('fr'):
+                return 'fr'
+            elif loc.startswith('es'):
+                return 'es'
+    except Exception:
+        pass
+    return 'en_US'
+
+
 def create(parent, Title, event):
     return LangSelect(parent, Title, event)
 
@@ -97,9 +112,18 @@ class LangSelect(wx.Dialog):
         self.__init_ctrls(parent, Title)
         self.__init_sizer()
         if event:
-            self.FindWindowByName(event).SetValue(True)
+            found = self.FindWindowByName(event)
+            if found:
+                found.SetValue(True)
+            else:
+                self.en_US.SetValue(True)
         else:
-            self.en_US.SetValue(True)
+            detected = auto_detect_locale()
+            found = self.FindWindowByName(detected)
+            if found:
+                found.SetValue(True)
+            else:
+                self.en_US.SetValue(True)
             self.cancel.Show(False)
 
     def GetLanguage(self):

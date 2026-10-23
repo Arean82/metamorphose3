@@ -23,6 +23,7 @@ from . import accentStrip
 from .operation import Operation
 from . import search
 import re
+import sanitizer
 import urllib.parse
 import utils
 import wx
@@ -78,7 +79,8 @@ class OpPanel(Operation):
                           id=wxID_PANELCASEMOD)
 
         self.other_operation_value = wx.Choice(choices=[_(u"Remove Accents"),
-                                               _("Convert '%xx' escapes to text"), _(u"Convert text to 1337")],
+                                               _("Convert '%xx' escapes to text"), _(u"Convert text to 1337"),
+                                               _(u"Sanitize Invalid Chars (Unicode Homoglyphs)")],
                                                id=wxID_PANELOTHER_OPERATION_VALUE, name=u'other_operation_value',
                                                parent=self, size=wx.Size(235, -1), style=0)
         self.other_operation_value.SetSelection(0)
@@ -246,6 +248,11 @@ class OpPanel(Operation):
                 match = match.replace(char, lookup[char])
             return match
 
+        def _sanitize_chars(match):
+            if isRegExp:
+                match = match.group()
+            return sanitizer.sanitize_filename(match, replace_homoglyphs=True)
+
         def _fix_encode(match):
             if isRegExp:
                 match = match.group()
@@ -259,7 +266,7 @@ class OpPanel(Operation):
             self.comds = (uppercase, lowercase, swapcase, capitalize, title, dorkify)
             self.op = self.case_operation_value.GetSelection()
         elif self.otherMod.GetValue():
-            self.comds = (_strip_accents, _url_decode, _to_l337, )
+            self.comds = (_strip_accents, _url_decode, _to_l337, _sanitize_chars)
             self.op = self.other_operation_value.GetSelection()
         elif self._fix_encode.GetValue():
             self.comds = (_fix_encode, )

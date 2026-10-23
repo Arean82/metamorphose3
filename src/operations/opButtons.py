@@ -19,8 +19,8 @@ import wx
 [wxID_PANEL, wxID_PANELID3, wxID_PANELID3SELECT, wxID_PANELINSDATE,
     wxID_PANELINS_NUM, wxID_PANELINSTIME, wxID_PANELSTATICTEXT1,
     wxID_PANELEXIF, wxID_PANELEXIFSELECT, wxID_PANELFOLDER,
-    wxID_PANELFOLDERDEPTH
- ] = [wx.NewIdRef() for __init_ctrls in range(11)]
+    wxID_PANELFOLDERDEPTH, wxID_PANELVIDEOSELECT, wxID_PANELPDFSELECT,
+ ] = [wx.NewIdRef() for __init_ctrls in range(13)]
 
 
 class Panel(wx.Panel):
@@ -40,7 +40,9 @@ class Panel(wx.Panel):
         buttonSizer.Add(self.insDate, 0, wx.LEFT | wx.ALIGN_CENTER, 8)
         buttonSizer.Add(self.insTime, 0, wx.LEFT | wx.ALIGN_CENTER, 8)
         buttonSizer.Add(self.id3select, 0, wx.LEFT | wx.ALIGN_CENTER, 8)
-        buttonSizer.Add(self.EXIFselect, 0, wx.RIGHT | wx.LEFT | wx.ALIGN_CENTER, 8)
+        buttonSizer.Add(self.EXIFselect, 0, wx.LEFT | wx.ALIGN_CENTER, 8)
+        buttonSizer.Add(self.videoSelect, 0, wx.RIGHT | wx.LEFT | wx.ALIGN_CENTER, 8)
+        buttonSizer.Add(self.pdfSelect, 0, wx.RIGHT | wx.LEFT | wx.ALIGN_CENTER, 8)
         buttonSizer.Add(self.folder, 0, wx.RIGHT | wx.ALIGN_CENTER, 2)
         buttonSizer.Add(self.folderDepth, 0, wx.RIGHT | wx.ALIGN_CENTER, 4)
         mainSizer.Add(buttonSizer, 0, wx.EXPAND | wx.TOP, 2)
@@ -87,6 +89,8 @@ class Panel(wx.Panel):
                                    _('conductor'),
                                    _('lyricist'),
                                    _('comment'),
+                                   _('bitrate'),
+                                   _('sample rate'),
                                    #_('version'),
                                    #_('language'),
                                    #_('encoded by'),
@@ -109,6 +113,7 @@ class Panel(wx.Panel):
                                     _(u"orientation"),
                                     _(u"exposure"),
                                     _(u"F-stop"),
+                                    _(u"aperture"),
                                     _(u"flash"),
                                     _(u"focal-length"),
                                     _(u"ISO"),
@@ -123,6 +128,31 @@ class Panel(wx.Panel):
         self.EXIFselect.SetSelection(0)
         self.EXIFselect.SetToolTip(_(u"Insert Exif tag information from tiff or jpeg file.\nUse the date button to insert Exif date"))
         self.EXIFselect.Bind(wx.EVT_CHOICE, self._on_exif, id=wxID_PANELEXIFSELECT)
+
+        self.videoSelect = wx.Choice(choices=[
+                                     _(u"video info"),
+                                     _('video width'),
+                                     _('video height'),
+                                     _('duration'),
+                                     _('video codec'),
+                                     _('audio codec'),
+                                     _('frame rate')],
+                                     id=wxID_PANELVIDEOSELECT, name=u'videoSelect', parent=self,
+                                     size=wx.Size(120, -1))
+        self.videoSelect.SetSelection(0)
+        self.videoSelect.SetToolTip(_(u"Insert video tag information (width, height, duration, codec)"))
+        self.videoSelect.Bind(wx.EVT_CHOICE, self._on_video, id=wxID_PANELVIDEOSELECT)
+
+        self.pdfSelect = wx.Choice(choices=[
+                                   _(u"pdf info"),
+                                   _('pdf title'),
+                                   _('pdf author'),
+                                   _('pdf subject')],
+                                   id=wxID_PANELPDFSELECT, name=u'pdfSelect', parent=self,
+                                   size=wx.Size(100, -1))
+        self.pdfSelect.SetSelection(0)
+        self.pdfSelect.SetToolTip(_(u"Insert PDF metadata tag (title, author, subject)"))
+        self.pdfSelect.Bind(wx.EVT_CHOICE, self._on_pdf, id=wxID_PANELPDFSELECT)
 
         self.folder = wx.Button(id=wxID_PANELFOLDER, label=_(u"folder:"),
                                 name=u'folder', parent=self, style=wx.BU_EXACTFIT)
@@ -173,6 +203,16 @@ class Panel(wx.Panel):
         if self.EXIFselect.GetSelection() != 0:
             self._insert_text(self.EXIFselect.GetStringSelection())
             self.EXIFselect.SetSelection(0)
+
+    def _on_video(self, event):
+        if self.videoSelect.GetSelection() != 0:
+            self._insert_text(self.videoSelect.GetStringSelection())
+            self.videoSelect.SetSelection(0)
+
+    def _on_pdf(self, event):
+        if self.pdfSelect.GetSelection() != 0:
+            self._insert_text(self.pdfSelect.GetStringSelection())
+            self.pdfSelect.SetSelection(0)
 
     def _on_folder_button(self, event):
         self._insert_text(_(u"folder%s") % self.folderDepth.GetValue())
