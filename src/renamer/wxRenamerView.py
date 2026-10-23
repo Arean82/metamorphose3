@@ -620,7 +620,7 @@ class Panel(wx.Panel):
         self.deleteOperations.SetSelection(0)
     
     def stack_operation(self, event, pos=-1, params={}):
-        if type(event) == type(u''):
+        if isinstance(event, str):
             op = event
             #event = False
         else:
@@ -630,7 +630,7 @@ class Panel(wx.Panel):
         if pos == -1:
             pos = self.usedOperations.GetItemCount()
         # loading operation from config
-        elif type(pos) == type(u' '):
+        elif isinstance(pos, str):
             pos = int(pos)
         # inserting operation
         else:

@@ -17,7 +17,6 @@ Selects and deselects items based on user input.
 Supports direct selection, regular expression filters, and attribute filters.
 """
 
-from __future__ import print_function
 import os
 import re
 import sys
@@ -155,9 +154,10 @@ class Core():
 
     def remove_items_by_name(self, itemNames):
         for name in itemNames:
-            displayedName = name.replace(self.params.root, '')
-            if os.path.split(displayedName)[0] == os.sep:
-                displayedName = displayedName[1:]
+            try:
+                displayedName = os.path.relpath(name, self.params.root)
+            except ValueError:
+                displayedName = name
             self.view.remove_item_by_name(displayedName)
 
             # remove from item list
@@ -309,7 +309,7 @@ class Core():
                     utils.make_err_msg(msg, _("Unable to load item"))
                     error = True
                     pass
-                except:
+                except Exception:
                     main.set_status_msg(_(u"Cannot read path!"), u'warn')
                     error = True
                     pass
@@ -320,7 +320,7 @@ class Core():
                 encodingError = False
                 try:
                     listedDir = os.listdir(params.root)
-                except:
+                except Exception:
                     main.set_status_msg(_(u"Cannot read path!"), u'warn')
                     error = True
                     pass

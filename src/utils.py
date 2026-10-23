@@ -16,7 +16,6 @@
 Helper functions available throughout Metamorphose.
 """
 
-from __future__ import print_function
 import errno
 import locale
 import os
@@ -168,7 +167,15 @@ def strip_operation_number(text):
 
 
 def get_user_path(file):
-    """Return user's default config path."""
+    """Return user's default config path, supporting XDG on Unix."""
+    if os.name != 'nt':
+        legacy_dir = os.path.join(os.path.expanduser('~'), app.homedir)
+        xdg_base = os.environ.get('XDG_CONFIG_HOME') or os.path.join(os.path.expanduser('~'), '.config')
+        xdg_dir = os.path.join(xdg_base, 'metamorphose3')
+        # Preserve existing legacy directory if user already has configurations there
+        if os.path.exists(legacy_dir) and not os.path.exists(xdg_dir):
+            return os.path.join(legacy_dir, file)
+        return os.path.join(xdg_dir, file)
     base = wx.StandardPaths.Get().GetUserConfigDir()
     return os.path.join(base, app.homedir, file)
 
@@ -189,7 +196,7 @@ def write_file(path, data):
     """Write to a file."""
     try:
         os.makedirs(os.path.dirname(path))
-    except:
+    except OSError:
         pass
     try:
         fp = open(path, 'w', encoding='utf_8', newline='')
@@ -238,7 +245,7 @@ def set_busy(busy):
 def get_encoding_choices(key):
     """Return valid encodings tuple for a given language type."""
     encodingLookup = {
-        _(u"Use System Default"): (locale.getlocale()[1] or locale.getpreferredencoding(False), ),
+        _(u"Use System Default"): (getattr(locale, 'getencoding', None)() if hasattr(locale, 'getencoding') else locale.getpreferredencoding(False), ),
         _(u'All Languages / Unicode'): (
             u'utf_8', u'utf_16'
         ),

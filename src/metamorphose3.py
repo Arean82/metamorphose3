@@ -28,7 +28,6 @@ collections, webmasters, programmers, legal and clerical, etc.
 This is what you should run to start the program.
 """
 
-from __future__ import print_function
 import sys
 import os
 import platform
@@ -158,8 +157,13 @@ def main(cli_options):
     application.MainLoop()
 
 
-if __name__ == '__main__':
+def cli():
+    """Main CLI entrypoint for console_scripts."""
     cli_options = get_options()
     main(cli_options)
+
+
+if __name__ == '__main__':
+    cli()
 
 

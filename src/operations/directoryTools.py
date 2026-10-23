@@ -203,18 +203,25 @@ class Panel(wx.Panel):
         return "\\", "/"
 
     def normalise_separators(self, path):
-        """Replace foreign separators and collapse duplicated ones."""
+        """Replace foreign separators and collapse duplicated ones, preserving UNC prefixes."""
         keep, replace = self.separator_chars()
         text = "".join(keep if char == replace else char for char in path)
+        is_unc = (keep == "\\") and text.startswith("\\\\") and not text.startswith("\\\\\\")
+        prefix = "\\\\" if is_unc else ""
+        remainder = text[2:] if is_unc else text
         doubled = keep + keep
-        while doubled in text:
-            text = text.replace(doubled, keep)
-        return text
+        while doubled in remainder:
+            remainder = remainder.replace(doubled, keep)
+        return prefix + remainder
 
     def has_bad_separators(self, path):
-        """True when the path uses a foreign separator or repeats one."""
+        """True when the path uses a foreign separator or repeats one (preserving UNC prefix)."""
         keep, replace = self.separator_chars()
-        return replace in path or (keep + keep) in path
+        if replace in path:
+            return True
+        is_unc = (keep == "\\") and path.startswith("\\\\") and not path.startswith("\\\\\\")
+        remainder = path[2:] if is_unc else path
+        return (keep + keep) in remainder
 
     # user presses enter, errors fixed
     def correct_path_enter(self, event):

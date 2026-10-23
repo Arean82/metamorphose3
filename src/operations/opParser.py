@@ -18,10 +18,16 @@
 #  __to_alpha function by Gustavo Niemeyer (gustavo@niemeyer.net)
 
 import calendar
+import gettext
 import locale
 import os
 import sys
 import time
+
+try:
+    _
+except NameError:
+    _ = gettext.gettext
 
 import exifread as EXIF
 import app
@@ -219,7 +225,7 @@ class Parser():
                 y = roman.toRoman(i)
                 if not numberStyle[1]:
                     y = y.lower()
-            except:
+            except Exception:
                 if main.bad.count(main.ec) < 1:
                     main.bad.append(main.ec)
                     main.errorLog.insert(0, (main.ec, file,
@@ -360,14 +366,14 @@ class Parser():
         finally:
             fileobj.close()
         results = list(zip(results, options))
-        results.sort()
+        results.sort(key=lambda item: item[0])
         (score, name), Kind = results[-1]
         if score > 0:
             if Kind.__name__ == 'MP3':
                 Kind = EasyID3
             try:
                 audioMetadata = Kind(filename)
-            except:
+            except Exception:
                 self.__add_to_errors(filename, _(u"Could not read audio metadata"))
                 return None
             app.debug_print(audioMetadata)
@@ -382,12 +388,13 @@ class Parser():
         if tag in audioMetadata:
             value = audioMetadata[tag][0]
             encoding = app.prefs.get('encodingSelect')
-            if str(encoding) != str(locale.getlocale()[1]):
+            system_encoding = getattr(locale, 'getencoding', None)() if hasattr(locale, 'getencoding') else locale.getpreferredencoding(False)
+            if str(encoding) != str(system_encoding):
                 try:
                     # incorrect encodings should default to latin-1
                     # allow forcing an encoding type from preferences
                     value = value.encode('latin-1').decode(encoding)
-                except:
+                except Exception:
                     self.__add_to_warnings(path, _(u"Invalid encoding specified: %s") % encoding)
             if tag == "tracknumber" and len(value) == 1:
                 value = "0" + value

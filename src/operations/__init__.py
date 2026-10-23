@@ -14,6 +14,13 @@
 
 """Operation definitions."""
 
+import gettext
+
+try:
+    _
+except NameError:
+    _ = gettext.gettext
+
 from . import changeLength
 from . import directory
 from . import insert

@@ -85,7 +85,7 @@ class SmallHelp(wx.Dialog):
 class ProgressDialog(wx.ProgressDialog):
     def __init__(self, parent, prefs, items, message):
         
-        if type(items) is not type(1):
+        if not isinstance(items, int):
             items = len(items)
         message = message.replace(u'%%%', str(items))
 

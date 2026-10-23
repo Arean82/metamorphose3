@@ -12,7 +12,6 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 
-from __future__ import print_function
 import os
 import sys
 
@@ -33,7 +32,7 @@ def debug_print(msg):
     if debug:
         try:
             print(msg)
-        except:
+        except Exception:
             print('invalid char in msg')
 
 
@@ -42,16 +41,8 @@ def __set_real_path():
     if hasattr(sys, "frozen"):
         path = os.path.dirname(sys.executable)
     else:
-        path = False
-        for candidate in sys.path:
-            if 'metamorphose' in candidate:
-                path = candidate
-                break
-        if not path:
-            print("Could not determine application path.\nMake sure the application is correctly installed.\n")
-            sys.exit(1);
-        #print(path)
-    return os.path.join(path)
+        path = os.path.dirname(os.path.abspath(__file__))
+    return path
 
 realPath = __set_real_path()
 
@@ -84,10 +75,9 @@ if os.sep == '/':
     homedir = '.' + homedir
 
 # Application versions
-__f = open(get_real_path("version"))
-version = __f.readline().strip()
-prefsVersion = __f.readline().strip()
-__f.close()
+with open(get_real_path("version"), "r", encoding="utf-8") as __f:
+    version = __f.readline().strip()
+    prefsVersion = __f.readline().strip()
 
 # Interface language
 language = ''

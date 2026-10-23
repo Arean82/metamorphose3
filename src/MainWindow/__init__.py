@@ -17,7 +17,6 @@ This is the main application.
 """
 
 # needed modules:
-from __future__ import print_function
 import gettext
 import locale
 import os
@@ -495,7 +494,7 @@ class MainWindow(wx.Frame):
         app.language = language
         app.debug_print("Set language: " + app.language)
 
-        self.encoding = locale.getlocale()[1] or locale.getpreferredencoding(False) or u'utf-8'
+        self.encoding = getattr(locale, 'getencoding', None)() if hasattr(locale, 'getencoding') else (locale.getpreferredencoding(False) or u'utf-8')
         app.debug_print("Set encoding: " + self.encoding)
 
         # to get some language settings to display properly:

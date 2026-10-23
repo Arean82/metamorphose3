@@ -87,7 +87,7 @@ class SaveConfig():
         elif isinstance(child, wx.Choice):
             value = child.GetSelection()
         if value is not None:
-            if type(value) == type(u''):
+            if isinstance(value, str):
                 value = escape(value)
             widgetType = child.GetClassName()
             id = child.GetName()
@@ -330,7 +330,7 @@ class LoadConfig():
         try:
             xmldoc = open(configFilePath, 'r', encoding='utf-8', newline='')
             xmldoc = minidom.parseString(xmldoc.read())
-        except:
+        except Exception:
             utils.make_err_msg(
                                _(u"Invalid XML in config file : %s") % configFilePath,
                                _(u"Invalid Configuration")

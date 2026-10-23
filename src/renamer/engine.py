@@ -12,7 +12,6 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 
-from __future__ import print_function
 import errno
 import os
 import platform
@@ -21,7 +20,7 @@ import time
 
 import app
 import classes
-import shutil1
+import shutil
 import utils
 
 
@@ -36,6 +35,7 @@ class Core():
         app.debug_print("loading renamer engine");
         global main
         main = MainWindow
+        self.main = MainWindow
 
     def _set_display(self, i):
         """Refreshes display and main window during renaming operation."""
@@ -61,7 +61,7 @@ class Core():
         Returns False on success.
         """
         try:
-            shutil1.move(original[0], renamed[0], True)
+            shutil.move(original[0], renamed[0])
         except OSError as e:
             app.debug_print("OSError : %s, %s" % (e.errno, e.strerror))
             # may need to create dirs first

@@ -23,6 +23,7 @@ from . import accentStrip
 from .operation import Operation
 from . import search
 import re
+import urllib.parse
 import utils
 import wx
 
@@ -150,21 +151,8 @@ class OpPanel(Operation):
         self.create_operation(event)
 
     def __unquote(self, s):
-        """
-        __unquote('abc%20def') -> 'abc def'.
-
-        Taken from urllib standard python library.
-        """
-        res = s.split('%')
-        for i in range(1, len(res)):
-            item = res[i]
-            try:
-                res[i] = _hextochr[item[:2]] + item[2:]
-            except KeyError:
-                res[i] = '%' + item
-            except UnicodeDecodeError:
-                res[i] = unichr(int(item[:2], 16)) + item[2:]
-        return "".join(res)
+        """Unquote URL-escaped characters."""
+        return urllib.parse.unquote(s)
 
     def create_operation(self, event):
         if not event:

@@ -37,7 +37,6 @@ Input is Unicode, the output is Unicode which will map directly to ASCII.
 Up to you to convert to/from your encoding.
 """
 
-from __future__ import print_function
 
 
 # dictionary used to convert characters

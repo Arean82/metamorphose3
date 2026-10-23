@@ -56,6 +56,7 @@ class Core():
         app.debug_print("loading sorting core");
         global main
         main = main_window
+        self.main = main_window
         if sys.platform == u'win32':
             self.ctime = _(u"creation time")
         else:
@@ -67,22 +68,18 @@ class Core():
         """Get wanted Exif info from image for sorting."""
         ref = {7: 'EXIF DateTimeOriginal', 8: 'Image DateTime'}
         try:
-            file = open(path, 'rb')
-        except:
+            with open(path, 'rb') as file:
+                data = EXIF.process_file(file, details=False)
+        except OSError:
+            return False
+        if not data:
+            return False
+        try:
+            datetime = str(data[ref[selection]])
+        except KeyError:
             return False
         else:
-            # get the tags
-            data = EXIF.process_file(file, details=False)
-            if not data:
-                return False
-            else:
-                try:
-                    datetime = str(data[ref[selection]])
-                except KeyError:
-                    return False
-                else:
-                    datetime = datetime.replace(' ', ':')
-                    return datetime
+            return datetime.replace(' ', ':')
 
     def sort_items(self, joinedItems):
         """Sorting the given list of items."""
@@ -106,11 +103,8 @@ class Core():
         elif params.intelySort:
             # return the number in the name
             def _get_numb(x):
-                try:
-                    compare = float(''.join(ch for ch in x[0] if ch.isdigit()))
-                except ValueError:
-                    compare = x[0]
-                return compare
+                digits = ''.join(ch for ch in x[0] if ch.isdigit())
+                return (0, float(digits)) if digits else (1, x[0].lower())
             # sort by the number
             def _folder_key(x):
                 return _get_numb(x)
@@ -125,9 +119,10 @@ class Core():
             # retrieval from Exif tags
             if selection > 6:
                 def _folder_key(x):
-                    return 0
+                    return ""
                 def _files_key(x):
-                    return self._get_from_exif(x[0], selection)
+                    val = self._get_from_exif(x[0], selection)
+                    return val if val is not False else ""
 
             # retrieval from os.stat
             else:
@@ -153,7 +148,10 @@ class Core():
         #
         # sort items automatically
         if not params.manually:
-            main.currentItem = None
+            if hasattr(self, 'main') and self.main:
+                self.main.currentItem = None
+            elif 'main' in globals() and main:
+                main.currentItem = None
             self.fc = 0
             def _dirs_top(f):
                 if f[1] == 0:

@@ -317,7 +317,7 @@ class Panel(wx.Panel):
             time = self.time.GetWxDateTime()
             try:
                 time = time.Format(time_form)
-            except:
+            except (ValueError, TypeError):
                 time = ''
                 pass
             self.dateTime[2] = time

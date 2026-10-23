@@ -12,7 +12,6 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 
-from __future__ import print_function
 from . import logging
 import os
 
@@ -74,29 +73,23 @@ class Methods:
         """
         Process file and return preferences dictionary.
         """
-        prefFile = self.__open_pref_file(path, 'r')
+        with self.__open_pref_file(path, 'r') as prefFile:
+            version = prefFile.readline().strip()[8:]
 
-        prefFile.seek(0)
-        version = prefFile.readline().strip()[8:]
+            # TODO preferences from a prior version
+            if version != app.prefsVersion:
+                app.debug_print("Old version found")
 
-        # TODO preferences from a prior version
-        if version != app.prefsVersion:
-            app.debug_print("Old version found")
-
-        prefFile.seek(0)
-        prefs = {}
-        for line in prefFile:
-            if line.find('=') > 0:
-                line = line.replace(u'\n', '')
-                split = line.split('=')
-                try:
-                    prefs[split[0]] = int(split[1])
-                except KeyError:
-                    pass
-                except ValueError:
-                    prefs[split[0]] = str(split[1])
-                    pass
-        prefFile.close()
+            prefFile.seek(0)
+            prefs = {}
+            for line in prefFile:
+                if '=' in line:
+                    key, sep, val = line.strip('\r\n').partition('=')
+                    if key:
+                        try:
+                            prefs[key] = int(val)
+                        except ValueError:
+                            prefs[key] = val
         return prefs
 
     def __load_preferences(self):
