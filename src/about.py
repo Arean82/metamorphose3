@@ -12,6 +12,7 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 
+import gettext
 import platform
 
 import app
@@ -20,6 +21,11 @@ import utils
 import wx
 import wx.lib.buttons
 import wx.adv
+
+try:
+    _
+except NameError:
+    _ = gettext.gettext
 
 
 def create(parent):
