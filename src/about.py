@@ -106,10 +106,10 @@ class About(wx.Dialog):
         self.wxVersion.SetFont(wx.Font(fontSize + 1, fontFamily, fontStyle, wx.FONTWEIGHT_NORMAL, False))
 
         self.link = wx.adv.HyperlinkCtrl(self, wxID_ABOUTLINK, _(u"Metamorphose Home Page"),
-                                     URL=u'http://file-folder-ren.sourceforge.net/', style=0)
+                                         url=u'http://file-folder-ren.sourceforge.net/')
 
         self.bugReport = wx.adv.HyperlinkCtrl(self, wxID_ABOUTLINK, _(u"GitHub Project Page"),
-                                          URL=u'https://github.com/Arean82/metamorphose3')
+                                              url=u'https://github.com/Arean82/metamorphose3')
         self.bugReport.Show(True)
 
         self.donateButton = wx.Button(id=wxID_PANELDONATEBUTTON,
@@ -120,7 +120,7 @@ class About(wx.Dialog):
                                id=wxID_PANELDONATEBUTTON)
 
         self.donate = wx.adv.HyperlinkCtrl(self, wxID_ABOUTDONATE, _(u"Donate"),
-                                       URL=u'http://sourceforge.net/donate/index.php?group_id=146403')
+                                           url=u'http://sourceforge.net/donate/index.php?group_id=146403')
         self.donate.Show(False)
 
         self.licenseButton = wx.Button(id=wxID_PANELLICENSEBUTTON,
