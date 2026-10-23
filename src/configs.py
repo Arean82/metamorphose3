@@ -18,7 +18,6 @@
 Handle loading and saving configuration XML files.
 """
 
-import codecs
 from os import path
 import re
 import time
@@ -38,7 +37,7 @@ def save(main):
     dlg = wx.FileDialog(None, message=_(u"Save configuration as ..."),
                         defaultDir=utils.get_user_path(u'configs'), defaultFile=u'.cfg',
                         wildcard=_(u"Configuration file (*.cfg)") + u'|*.cfg',
-                        style=wx.SAVE | wx.OVERWRITE_PROMPT
+                        style=wx.FD_SAVE | wx.FD_OVERWRITE_PROMPT
                         )
     # write file
     if dlg.ShowModal() == wx.ID_OK:
@@ -60,7 +59,7 @@ def load(main, configFilePath=False):
                             message=_(u"Load a configuration file"),
                             defaultDir=utils.get_user_path('configs'), defaultFile=u'',
                             wildcard=_(u"Configuration file (*.cfg)") + u'|*.cfg',
-                            style=wx.OPEN
+                            style=wx.FD_OPEN
                             )
         if dlg.ShowModal() == wx.ID_OK:
             LoadConfig(main, dlg.GetPath())
@@ -134,7 +133,7 @@ class SaveConfig():
 
         for i in range(operationList.GetItemCount()):
             type = operationList.GetItemText(i)
-            type = re.sub("\d{1,}: ", '', type)
+            type = re.sub(r"\d{1,}: ", '', type)
             type = operations.defs[type][0]
             operation = operationStack[i]
             cfg += u'\t\t<operation id="%s" type="%s">\n' % (i, type)
@@ -241,7 +240,7 @@ class LoadConfig():
                 parent = getattr(parent, id)
             except AttributeError:
                 self.loadError = True
-                print id
+                print(id)
                 pass
             else:
                 for child in node.childNodes:
@@ -330,8 +329,8 @@ class LoadConfig():
         app.debug_print("loading config file : %s" % configFilePath)
         # attempt to open config file
         try:
-            xmldoc = codecs.open(configFilePath, 'r', 'utf-8')
-            xmldoc = minidom.parseString(xmldoc.read().encode("utf-8"))
+            xmldoc = open(configFilePath, 'r', encoding='utf-8', newline='')
+            xmldoc = minidom.parseString(xmldoc.read())
         except:
             utils.make_err_msg(
                                _(u"Invalid XML in config file : %s") % configFilePath,

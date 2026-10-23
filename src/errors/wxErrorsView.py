@@ -19,7 +19,7 @@ from wx.lib.mixins.listctrl import ListCtrlAutoWidthMixin
 [wxID_ERRORPANEL, wxID_ERRORPANELERRORSLIST, wxID_ERRORPANELERRORSSTATICTEXT1,
     wxID_ERRORPANELERRORSREMOVEERRORS, wxID_ERRORPANELERRORSREMOVEWARNINGS,
     wxID_ERRORPANELERRORSSTATICTEXT2, wxID_ERRORPANELERRORSREMOVE, wxID_ERRORPANELERRORSSAVE
- ] = [wx.NewId() for __init_ctrls in range(8)]
+ ] = [wx.NewIdRef() for __init_ctrls in range(8)]
 
 
 class ErrorList(wx.ListCtrl, ListCtrlAutoWidthMixin):
@@ -191,7 +191,7 @@ class Panel(wx.Panel):
         dlg = wx.FileDialog(self, message=_(u"Save error list as ..."),
                             defaultDir='', defaultFile=u'.csv',
                             wildcard=_(u"Log file (*.csv)") + u'|*.csv',
-                            style=wx.SAVE | wx.OVERWRITE_PROMPT
+                            style=wx.FD_SAVE | wx.FD_OVERWRITE_PROMPT
                             )
         if dlg.ShowModal() == wx.ID_OK:
             # attempt to write file

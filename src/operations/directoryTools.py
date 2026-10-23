@@ -15,7 +15,7 @@
 import os
 import re
 
-import opButtons
+from . import opButtons
 import utils
 import wx
 
@@ -23,7 +23,7 @@ import wx
     wxID_RADIOBUTTON2, wxID_ADDCURRENT, wxID_PATHRECUR,
     wxID_INVERSE, wxID_BROWSE, wxID_ADDBYFILENAME,
     wxID_USEFILEEXT, wxID_USEFILENAME
- ] = [wx.NewId() for __init_ctrls in range(11)]
+ ] = [wx.NewIdRef() for __init_ctrls in range(11)]
 
 
 class Panel(wx.Panel):
@@ -173,7 +173,7 @@ class Panel(wx.Panel):
     # preliminary, needs more work!
 
     #from http://regexlib.com
-    """
+    r"""
     ^[^\\\./:\*\?\"<>\|]{1}[^\\/:\*\?\"<>\|]{0,254}$
     Validates a long filename using Windows' rules. Requires one
     valid filename character other than "." for the first
@@ -191,7 +191,7 @@ class Panel(wx.Panel):
     -- vinod kumar
     """
 
-    """
+    r"""
     ^(([a-zA-Z]:|\\)\\)?(((\.)|(\.\.)|([^\\/:\*\?"\|<>\. ](([^\\/:\*\?"\|<>\. ])|([^\\/:\*\?"\|<>]*[^\\/:\*\?"\|<>\. ]))?))\\)*[^\\/:\*\?"\|<>\. ](([^\\/:\*\?"\|<>\. ])|([^\\/:\*\?"\|<>]*[^\\/:\*\?"\|<>\. ]))?$
     File Name Validator. Validates both UNC (\\server\share\file) and regular MS path (c:\file).
     -- Dmitry Borysov
@@ -202,11 +202,11 @@ class Panel(wx.Panel):
         # remove dupe path seperators and make sure
         # only valid path seperators are used
         if os.sep == "/":
-            pattern = "(\\\\{1,})|(\/{2,})"
+            pattern = r"(\\{1,})|(\/{2,})"
             repl = "/"
         else:
-            pattern = "(\\\\{2,})|(\/{1,})"
-            repl = "\\\\"
+            pattern = r"(\\{2,})|(\/{1,})"
+            repl = r"\\"
         return pattern, repl
 
     # user presses enter, errors fixed

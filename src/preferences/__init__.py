@@ -13,17 +13,16 @@
 # GNU General Public License for more details.
 
 from __future__ import print_function
-import codecs
-import logging
+from . import logging
 import os
 
 import app
-import automation
-import colors
-from dialog import Dialog
-import display
-import errorCheck
-import general
+from . import automation
+from . import colors
+from .dialog import Dialog
+from . import display
+from . import errorCheck
+from . import general
 import utils
 import sys
 import wx
@@ -54,7 +53,7 @@ class Methods:
 
     def __open_pref_file(self, path, mode):
         app.debug_print("Opening as '%s': %s" % (mode, path))
-        prefFile = codecs.open(path, mode, 'utf-8')
+        prefFile = open(path, mode, encoding='utf-8', newline='')
         return prefFile
 
     def __use_defaults(self):
@@ -67,7 +66,7 @@ class Methods:
         prefDiag.ShowModal()
         try:
             prefDiag.Destroy()
-        except wx._core.PyDeadObjectError:
+        except RuntimeError:
             app.debug_print("=======================")
             pass
 
@@ -95,7 +94,7 @@ class Methods:
                 except KeyError:
                     pass
                 except ValueError:
-                    prefs[split[0]] = unicode(split[1])
+                    prefs[split[0]] = str(split[1])
                     pass
         prefFile.close()
         return prefs

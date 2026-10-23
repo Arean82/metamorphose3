@@ -35,13 +35,13 @@ import wx
     wxID_MENUAPPLYEXTENSION, wxID_MENUDESTROY,
     wxID_MENUDESTROYALL, wxID_RESETOPERATIONBUTTON,
     wxID_MENUCHANGENAME,
- ] = [wx.NewId() for __init_ctrls in range(26)]
+ ] = [wx.NewIdRef() for __init_ctrls in range(26)]
 
 
-BackgroundClr = wx.SystemSettings_GetColour(wx.SYS_COLOUR_WINDOW)
-HighlightClr = wx.SystemSettings_GetColour(wx.SYS_COLOUR_HIGHLIGHT)
-HighlightTxtClr = wx.SystemSettings_GetColour(wx.SYS_COLOUR_HIGHLIGHTTEXT)
-TxtClr = wx.SystemSettings_GetColour(wx.SYS_COLOUR_WINDOWTEXT)
+BackgroundClr = wx.SystemSettings.GetColour(wx.SYS_COLOUR_WINDOW)
+HighlightClr = wx.SystemSettings.GetColour(wx.SYS_COLOUR_HIGHLIGHT)
+HighlightTxtClr = wx.SystemSettings.GetColour(wx.SYS_COLOUR_HIGHLIGHTTEXT)
+TxtClr = wx.SystemSettings.GetColour(wx.SYS_COLOUR_WINDOWTEXT)
 
 
 class OperationDropTarget(wx.TextDropTarget):
@@ -101,7 +101,7 @@ class OperationDropTarget(wx.TextDropTarget):
         if pos < 0:
             pos = self.itemCount - 1
         if ':' in data:
-            n = int(re.search('\d*', data).group(0))
+            n = int(re.search(r'\d*', data).group(0))
             moveBy = (pos - n) + 1
             self.prnt.move_operations(moveBy, n-1)
         else:
@@ -155,14 +155,14 @@ class IntroTextPanel(wx.Panel):
                                          label=_(u"You don't have any operations defined."),
                                          name='staticText1', parent=self, style=wx.ALIGN_LEFT,
                                          size=wx.Size(txtSize[0], -1))
-        self.staticText1.SetFont(wx.Font(fontSize + 3, fontFamily, fontStyle, wx.BOLD))
+        self.staticText1.SetFont(wx.Font(fontSize + 3, fontFamily, fontStyle, wx.FONTWEIGHT_BOLD))
 
         label = _("Double-click or drag && drop an operation in the 'Available' box to add one.")
         label += _("\nYou may then drag && drop used operations to reorder them.")
         self.staticText2 = wx.StaticText(id=-1, label=label,
                                          name='staticText2', parent=self, style=wx.ALIGN_LEFT,
                                          size=wx.Size(txtSize[0], -1))
-        self.staticText2.SetFont(wx.Font(fontSize, fontFamily, fontStyle, wx.BOLD))
+        self.staticText2.SetFont(wx.Font(fontSize, fontFamily, fontStyle, wx.FONTWEIGHT_BOLD))
 
         self.staticText3 = wx.StaticText(id=-1,
                                          label=txt, name='staticText3', parent=self,
@@ -407,10 +407,8 @@ class Panel(wx.Panel):
         dt = OperationDropTarget(self.usedOperations)
         self.usedOperations.SetDropTarget(dt)
 
-        wx.EVT_LIST_BEGIN_DRAG(self.availableOperations, self.availableOperations.GetId(),
-                               self.__available_drag_init)
-        wx.EVT_LIST_BEGIN_DRAG(self.usedOperations, self.usedOperations.GetId(),
-                               self.__used_drag_init)
+        self.availableOperations.Bind(wx.EVT_LIST_BEGIN_DRAG, self.__available_drag_init)
+        self.usedOperations.Bind(wx.EVT_LIST_BEGIN_DRAG, self.__used_drag_init)
 
     def __init__(self, Core, parent, main_window):
         global main
@@ -476,7 +474,7 @@ class Panel(wx.Panel):
         self.mainSizer.Layout()
 
     def __add_operation_to_list(self, pos, opName):
-        self.usedOperations.InsertStringItem(pos, unicode(pos + 1) + u": " + opName)
+        self.usedOperations.InsertStringItem(pos, str(pos + 1) + u": " + opName)
 
     def __set_operations_apply_menu(self, event):
         """
@@ -688,7 +686,7 @@ class Panel(wx.Panel):
         n = self.get_current_operation_numb()
         if n != None:
             type = self.usedOperations.GetItemText(n)
-            type = re.sub("\d{1,}: ", '', type)
+            type = re.sub(r"\d{1,}: ", '', type)
 
             dlg = wx.MessageDialog(self, _("Really destroy this '%s' operation?") % type,
                                    _("Are You Sure?"), wx.YES_NO | wx.YES_DEFAULT | wx.ICON_WARNING)

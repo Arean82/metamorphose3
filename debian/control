@@ -1,14 +1,14 @@
-Source: metamorphose2
+Source: metamorphose3
 Section: utils
 Priority: optional
-Maintainer: ianaré sévi <ianare@gmail.com>
+Maintainer: Arean <arean@synorastudio.in>
 Build-Depends: debhelper (>= 6)
 Standards-Version: 3.8.0
 Homepage: http://file-folder-ren.sourceforge.net
 
-Package: metamorphose2
+Package: metamorphose3
 Architecture: all
-Depends: python (>=2.6), python-wxgtk2.8 (>= 2.8), python-imaging (>=1.1.6), python-mutagen (>=1)
+Depends: python3 (>=3.12), python3-wxgtk4.0, python3-pil, python3-mutagen, python3-exifread
 Description: A mass renamer for files and folders (version 2).
  A profesional renaming tool for almost any situation, it has many powerful
  functions. Well suited for those that need to rename many files and/or folders

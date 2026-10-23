@@ -12,9 +12,9 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 
-import insertTools
-from notebook import Notebook
-from operation import Operation
+from . import insertTools
+from .notebook import Notebook
+from .operation import Operation
 import utils
 import wx
 

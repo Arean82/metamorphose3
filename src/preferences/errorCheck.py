@@ -21,7 +21,7 @@ import wx
 [wxID_PANEL, wxID_PANELDELETEBADCHARS,
     wxID_PANELMARKBADCHARS, wxID_PANELMARKWARNING, wxID_PANELUSEWINCHARS,
     wxID_PANELUSEWINNAMES, wxID_PANELWINNAMESBAD, wxID_PANELWINNAMESWARN,
- ] = [wx.NewId() for __init_ctrls in range(8)]
+ ] = [wx.NewIdRef() for __init_ctrls in range(8)]
 
 
 class Panel(wx.Panel):

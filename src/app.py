@@ -43,9 +43,9 @@ def __set_real_path():
         path = os.path.dirname(sys.executable)
     else:
         path = False
-        for path in sys.path:
-            if 'metamorphose' in path:
-                path = path.decode(sys.getfilesystemencoding())
+        for candidate in sys.path:
+            if 'metamorphose' in candidate:
+                path = candidate
                 break
         if not path:
             print("Could not determine application path.\nMake sure the application is correctly installed.\n")
@@ -67,7 +67,7 @@ def locale_path(lang):
     if hasattr(sys, "frozen"):
         return get_real_path(u'messages')
     # Linux, freeBSD when installed
-    elif os.path.exists(u'/usr/share/locale/%s/LC_MESSAGES/metamorphose2.mo' % lang):
+    elif os.path.exists(u'/usr/share/locale/%s/LC_MESSAGES/metamorphose3.mo' % lang):
         return u'/usr/share/locale'
     # run from source
     else:
@@ -79,7 +79,7 @@ def locale_path(lang):
 #
 
 # home directory, for config files and such
-homedir = 'metamorphose2'
+homedir = 'metamorphose3'
 if os.sep == '/':
     homedir = '.' + homedir
 

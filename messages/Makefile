@@ -10,17 +10,17 @@ msgfmt_location=$(shell which msgfmt)
 build:
 	@for lang in $$(ls); do\
 		if [ -d $$lang ]; then\
-			echo building "$$lang/LC_MESSAGES/metamorphose2.mo";\
+			echo building "$$lang/LC_MESSAGES/metamorphose3.mo";\
 			mkdir -p $$lang/LC_MESSAGES;\
-			$(msgfmt_location) -o $$lang/LC_MESSAGES/metamorphose2.mo $$lang/$$lang.po;\
+			$(msgfmt_location) -o $$lang/LC_MESSAGES/metamorphose3.mo $$lang/$$lang.po;\
 		fi;\
 	done;
 
 clean:
 	@for lang in $$(ls); do\
 		if [ -d $$lang ]; then\
-			echo deleting "$$lang/LC_MESSAGES/metamorphose2.mo";\
-			rm $$lang/LC_MESSAGES/metamorphose2.mo;\
+			echo deleting "$$lang/LC_MESSAGES/metamorphose3.mo";\
+			rm $$lang/LC_MESSAGES/metamorphose3.mo;\
 			rmdir $$lang/LC_MESSAGES;\
 		fi;\
 	done;
@@ -28,7 +28,7 @@ clean:
 copy:
 	@for lang in $$(ls); do\
 		if [ -d $$lang ]; then\
-			echo copying to "$(DESTDIR)$(PREFIX)/share/locale/$$lang/LC_MESSAGES/metamorphose2.mo";\
+			echo copying to "$(DESTDIR)$(PREFIX)/share/locale/$$lang/LC_MESSAGES/metamorphose3.mo";\
 			mkdir -p $(DESTDIR)$(PREFIX)/share/locale/$$lang/LC_MESSAGES;\
 			cp $$lang/LC_MESSAGES/*.mo $(DESTDIR)$(PREFIX)/share/locale/$$lang/LC_MESSAGES/;\
 		fi;\
@@ -39,7 +39,7 @@ install: build copy clean
 uninstall:
 	@for lang in $$(ls); do\
 		if [ -d $$lang ]; then\
-			echo deleting "$(DESTDIR)$(PREFIX)/share/locale/$$lang/LC_MESSAGES/metamorphose2.mo";\
+			echo deleting "$(DESTDIR)$(PREFIX)/share/locale/$$lang/LC_MESSAGES/metamorphose3.mo";\
 			rm $(DESTDIR)$(PREFIX)/share/locale/$$lang/LC_MESSAGES/*.mo;\
 			echo deleting $(DESTDIR)$(PREFIX)/share/locale/$$lang/LC_MESSAGES;\
 			rmdir -p $(DESTDIR)$(PREFIX)/share/locale/$$lang/LC_MESSAGES > /dev/null 2>&1;\

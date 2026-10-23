@@ -50,7 +50,7 @@ def _samefile(src, dst):
 def copyfile(src, dst):
     """Copy data from src to dst"""
     if _samefile(src, dst):
-        raise Error, "`%s` and `%s` are the same file" % (src, dst)
+        raise Error("`%s` and `%s` are the same file" % (src, dst))
 
     fsrc = None
     fdst = None
@@ -106,7 +106,7 @@ def copy2(src, dst, ignore_permission_err=False):
     copyfile(src, dst)
     try:
         copystat(src, dst)
-    except OSError, err:
+    except OSError as err:
         if WindowsError is not None and isinstance(err, WindowsError):
             pass
         elif ignore_permission_err and err.errno == errno.EPERM:
@@ -144,15 +144,15 @@ def copytree(src, dst, symlinks=False, ignore_permission_err=False):
             else:
                 copy2(srcname, dstname, ignore_permission_err)
             # XXX What about devices, sockets etc.?
-        except (IOError, os.error), why:
+        except (IOError, os.error) as why:
             errors.append((srcname, dstname, str(why)))
         # catch the Error from the recursive copytree so that we can
         # continue with other files
-        except Error, err:
+        except Error as err:
             errors.extend(err.args[0])
     try:
         copystat(src, dst)
-    except OSError, err:
+    except OSError as err:
         if WindowsError is not None and isinstance(err, WindowsError):
             pass
         elif ignore_permission_err and err.errno == errno.EPERM:
@@ -161,7 +161,7 @@ def copytree(src, dst, symlinks=False, ignore_permission_err=False):
             errors.extend((src, dst, str(err)))
 
     if errors:
-        raise Error, errors
+        raise Error(errors)
 
 
 def rmtree(path, ignore_errors=False, onerror=None):
@@ -184,7 +184,7 @@ def rmtree(path, ignore_errors=False, onerror=None):
     names = []
     try:
         names = os.listdir(path)
-    except os.error, err:
+    except os.error as err:
         onerror(os.listdir, path, sys.exc_info())
     for name in names:
         fullname = os.path.join(path, name)
@@ -197,7 +197,7 @@ def rmtree(path, ignore_errors=False, onerror=None):
         else:
             try:
                 os.remove(fullname)
-            except os.error, err:
+            except os.error as err:
                 onerror(os.remove, fullname, sys.exc_info())
     try:
         os.rmdir(path)
@@ -221,7 +221,7 @@ def move(src, dst, ignore_permission_err=False):
         if os.path.isdir(src):
             symlinks = True
             if destinsrc(src, dst):
-                raise Error, "Cannot move a directory '%s' into itself '%s'." % (src, dst)
+                raise Error("Cannot move a directory '%s' into itself '%s'." % (src, dst))
             copytree(src, dst, symlinks, ignore_permission_err)
             rmtree(src)
         else:

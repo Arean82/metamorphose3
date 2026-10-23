@@ -27,7 +27,7 @@ import time
 import app
 import classes
 import utils
-import wxPickerView
+from . import wxPickerView
 
 
 class Parameters(classes.Parameters):
@@ -77,16 +77,16 @@ class Core():
     def __init__(self, parent, MainWindow):
         app.debug_print("loading picker core")
         self.CommonSearches = (
-             ("" , ""),
-             ( _(u"- audio") , u"\.(mp3|wav|ogg|flac|wma|aiff|aac|m3u|mid|ra|ram|m4a)$"),
-             ( _(u"- image") , u"\.(bmp|jpg|jpeg|png|svg|ico|tif|tiff|gif|psd|ai|thm|nef)$"),
-             ( _(u"- video") , u"\.(avi|mpg|mpeg|mpe|mp4|m4e|wmv|divx|flc|mov|ogm)$"),
-             ( _(u"- office related") , u"\.(txt|csv|rtf|doc|otf|xls|pps|ppt)$"),
-             ( _(u"- web related") , u"\.(htm|html|php|css|js|asp|cgi|swf)$"),
-             ( _(u"- programming") , u"\.(py|pyc|php|pl|h|c|cpp|cxx|jar|java|js|tcl)$"),
-             ( _(u"- compressed") , u"\.(zip|tar|7z|ace|gz|tgz|rar|r\d{1,3}|cab|bz2)$"),
-             ( _(u"- an extension") , u"^.+\..+$"),
-             ( _(u"- only an extension") , u"(^|\\\|/)\."),
+             ("", ""),
+             (_(u"- audio"), r"\.(mp3|wav|ogg|flac|wma|aiff|aac|m3u|mid|ra|ram|m4a)$"),
+             (_(u"- image"), r"\.(bmp|jpg|jpeg|png|svg|ico|tif|tiff|gif|psd|ai|thm|nef)$"),
+             (_(u"- video"), r"\.(avi|mpg|mpeg|mpe|mp4|m4e|wmv|divx|flc|mov|ogm)$"),
+             (_(u"- office related"), r"\.(txt|csv|rtf|doc|otf|xls|pps|ppt)$"),
+             (_(u"- web related"), r"\.(htm|html|php|css|js|asp|cgi|swf)$"),
+             (_(u"- programming"), r"\.(py|pyc|php|pl|h|c|cpp|cxx|jar|java|js|tcl)$"),
+             (_(u"- compressed"), r"\.(zip|tar|7z|ace|gz|tgz|rar|r\d{1,3}|cab|bz2)$"),
+             (_(u"- an extension"), r"^.+\.\..+$"),
+             (_(u"- only an extension"), r"(^|\|/)\."),
         )
         self.CustomSearches = {}
 
@@ -278,10 +278,6 @@ class Core():
                 join = os.path.join(params.root, entry)
                 return os.path.isdir(join)
 
-            def get_encoded_name(filename):
-                filename = filename.decode(sys.getfilesystemencoding(), 'replace')
-                return filename
-
             # Now to get the items according to operations defined above
 
             # retrieve items by walking
@@ -308,7 +304,7 @@ class Core():
                                 _filter_folders(entry)
 
                 except UnicodeDecodeError as err:
-                    entry = err[1].decode(sys.getfilesystemencoding(), 'replace')
+                    entry = err.object.decode(sys.getfilesystemencoding(), 'replace')
                     msg = _("The item '%s' has an encoding error.\nUnable to process this path in recursive mode, please correct the name and try again.")\
                         % entry
                     utils.make_err_msg(msg, _("Unable to load item"))
@@ -335,7 +331,6 @@ class Core():
                         try:
                             isFolder = isdir(entry)
                         except UnicodeDecodeError:
-                            entry = entry.decode(sys.getfilesystemencoding(), 'replace')
                             isFolder = isdir(entry)
                             encodingError = True
                         # load folders if set:

@@ -13,14 +13,14 @@
 # GNU General Public License for more details.
 
 from __future__ import print_function
-import logging
+from . import logging
 
 import app
-import automation
-import colors
-import display
-import errorCheck
-import general
+from . import automation
+from . import colors
+from . import display
+from . import errorCheck
+from . import general
 import utils
 import wx
 
@@ -164,11 +164,11 @@ class Dialog(wx.Dialog):
                     or isinstance(child, wx.SpinCtrl):
                         child.SetValue(v)
                 elif isinstance(child, wx.ComboBox) or isinstance(child, wx.TextCtrl):
-                    child.SetValue(unicode(v))
+                    child.SetValue(str(v))
                 elif isinstance(child, wx.Choice):
                     child.SetSelection(v)
                 elif isinstance(child, wx.DirPickerCtrl) or isinstance(child, wx.FilePickerCtrl):
-                    child.SetPath(unicode(v))
+                    child.SetPath(str(v))
                 elif isinstance(child, wx.ColourPickerCtrl):
                     child.SetColour(v)
 

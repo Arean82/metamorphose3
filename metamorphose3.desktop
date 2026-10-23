@@ -1,14 +1,14 @@
 [Desktop Entry]
-Name=Métamorphose2
-GenericName=Métamorphose2
+Name=Métamorphose3
+GenericName=Métamorphose3
 Type=Application
 Terminal=false
 Categories=Utility;Filesystem;
-Icon=metamorphose2
-Exec=/usr/bin/metamorphose2
+Icon=metamorphose3
+Exec=/usr/bin/metamorphose3
 Encoding=UTF-8
 StartupNotify=true
-X-AppInstall-Package=metamorphose2
+X-AppInstall-Package=metamorphose3
 Comment=A mass renamer for files and folders
 Comment[de]=Ein Massenumbenenner für Dateien und Verzeichnisse
 Comment[el]=Εργαλείο μαζικής μετονομασίας αρχείων και φακέλων

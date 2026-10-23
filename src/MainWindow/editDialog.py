@@ -19,7 +19,7 @@ import wx
 [wxID_EDITDIALOG, wxID_EDITDIALOGBUTTON1, wxID_EDITDIALOGBUTTON2,
     wxID_EDITDIALOGSTATICTEXT1, wxID_EDITDIALOGSTATICTEXT2, wxID_EDITDIALOGVALUE,
     wxID_EDITDIALOGSTATICTEXT3
- ] = [wx.NewId() for __init_ctrls in range(7)]
+ ] = [wx.NewIdRef() for __init_ctrls in range(7)]
 
 
 class Dialog(wx.Dialog):
@@ -63,7 +63,7 @@ class Dialog(wx.Dialog):
         self.staticText3 = wx.StaticText(id=wxID_EDITDIALOGSTATICTEXT3,
                                          label=_(u"Previewing will destroy any changes!"),
                                          name='staticText3', parent=self)
-        self.staticText3.SetFont(wx.Font(10, wx.SWISS, wx.NORMAL, wx.BOLD, False))
+        self.staticText3.SetFont(wx.Font(10, wx.FONTFAMILY_SWISS, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD, False))
 
         self.value = wx.TextCtrl(id=wxID_EDITDIALOGVALUE, name=u'value',
                                  parent=self, size=wx.Size(410, -1), value=u'')

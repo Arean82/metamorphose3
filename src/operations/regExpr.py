@@ -20,7 +20,7 @@ import wx
 [wxID_PANEL, wxID_PANELA_Z, wxID_PANELDIGIT,
     wxID_PANELREG_EXPR, wxID_PANELREG_EXP_DIV,
     wxID_PANELREG_EXP_I, wxID_PANELREG_EXP_U,
- ] = [wx.NewId() for __init_ctrls in range(7)]
+ ] = [wx.NewIdRef() for __init_ctrls in range(7)]
 
 
 class Panel(wx.Panel):
@@ -61,7 +61,7 @@ class Panel(wx.Panel):
         self.uRegExpr = wx.CheckBox(id=wxID_PANELREG_EXP_U, label=_(u"Unicode"),
                                     name=u'uRegExpr', parent=self)
         self.uRegExpr.SetValue(True)
-        self.uRegExpr.SetToolTipString(_(u"Unicode match (\w matches 'a','b','c', etc)"))
+        self.uRegExpr.SetToolTipString(_(r"Unicode match (\w matches 'a','b','c', etc)"))
         self.uRegExpr.Enable(False)
         self.uRegExpr.Bind(wx.EVT_CHECKBOX, prnt.define_regex)
 
@@ -91,9 +91,9 @@ class Panel(wx.Panel):
     def _add_regex_buttons(self, event):
         """Add some predefined REs."""
         if event.GetId() == wxID_PANELA_Z:
-            txt = "[^\W\d]"
+            txt = r"[^\W\d]"
         elif event.GetId() == wxID_PANELDIGIT:
-            txt = "\d"
+            txt = r"\d"
         activatedField = self.activatedField
 
         iPoint = activatedField.GetInsertionPoint()

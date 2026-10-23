@@ -11,26 +11,26 @@
 ;General
 
   ;Name and file
-  !define VERSION "0.8.2"
+  !define VERSION "3.0.0"
 
-  Name "Métamorphose2"
-  OutFile "metamorphose2_${VERSION}_setup.exe"
+  Name "Métamorphose3"
+  OutFile "metamorphose3_${VERSION}_setup.exe"
   !define MUI_ICON "metsetup.ico"
   !define MUI_UNICON "metsetup.ico"
   !define MUI_WELCOMEFINISHPAGE_BITMAP "wizard_i.bmp"
   !define MUI_UNWELCOMEFINISHPAGE_BITMAP "wizard_u.bmp"
   
   ;Get installation folder from registry if available
-  InstallDirRegKey HKLM "Software\metamorphose2" ""
+  InstallDirRegKey HKLM "Software\metamorphose3" ""
 
   ;Default installation folder
-  InstallDir "$PROGRAMFILES\metamorphose2"
+  InstallDir "$PROGRAMFILES\metamorphose3"
 
-  VIProductVersion "2.0.8.2"
-  VIAddVersionKey "ProductName" "Métamorphose2"
+  VIProductVersion "3.0.0.0"
+  VIAddVersionKey "ProductName" "Métamorphose3"
   VIAddVersionKey "CompanyName" "Ianaré Sévi"
-  VIAddVersionKey "LegalCopyright" "(C) 2006-2010 Ianaré Sévi"
-  VIAddVersionKey "FileDescription" "Installer for Métamorphose 2.${VERSION}"
+  VIAddVersionKey "LegalCopyright" "(C) 2006-2015 Ianaré Sévi"
+  VIAddVersionKey "FileDescription" "Installer for Métamorphose 3.${VERSION}"
   VIAddVersionKey "FileVersion" "${VERSION}"
 
   !define CSIDL_SYSTEM "0x25" ;System path
@@ -64,12 +64,12 @@
   !insertmacro MUI_PAGE_DIRECTORY
   ;Start Menu Folder Page Configuration
   ;!define MUI_STARTMENUPAGE_REGISTRY_ROOT "HKLM"
-  ;!define MUI_STARTMENUPAGE_REGISTRY_KEY "Software\metamorphose2"
+  ;!define MUI_STARTMENUPAGE_REGISTRY_KEY "Software\metamorphose3"
   ;!define MUI_STARTMENUPAGE_REGISTRY_VALUENAME "Start Menu Folder"
   !insertmacro MUI_PAGE_STARTMENU Application $STARTMENU_FOLDER
 
   !insertmacro MUI_PAGE_INSTFILES
-  !define MUI_FINISHPAGE_RUN "$INSTDIR\metamorphose2.exe"
+  !define MUI_FINISHPAGE_RUN "$INSTDIR\metamorphose3.exe"
   !insertmacro MUI_PAGE_FINISH
 
   ;uninstall
@@ -96,7 +96,7 @@ Function win2000
 
 FunctionEnd
 
-Section "Métamorphose2" Application
+Section "Métamorphose3" Application
 
   SectionIn RO
   SetOutPath "$INSTDIR"
@@ -111,8 +111,8 @@ Section "Métamorphose2" Application
   Call win2000
 
   ;Store installation folder
-  WriteRegStr HKLM "Software\metamorphose2" "" $INSTDIR
-  WriteRegStr HKLM "Software\metamorphose2" "version" ${VERSION}
+  WriteRegStr HKLM "Software\metamorphose3" "" $INSTDIR
+  WriteRegStr HKLM "Software\metamorphose3" "version" ${VERSION}
 
   ;Create uninstaller
   WriteUninstaller "$INSTDIR\Uninstall.exe"
@@ -120,23 +120,23 @@ Section "Métamorphose2" Application
   !insertmacro MUI_STARTMENU_WRITE_BEGIN Application
     ;Create shortcuts
     CreateDirectory "$SMPROGRAMS\$STARTMENU_FOLDER"
-    CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Métamorphose2.lnk" "$INSTDIR\metamorphose2.exe"
+    CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Métamorphose3.lnk" "$INSTDIR\metamorphose3.exe"
     CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Uninstall.lnk" "$INSTDIR\Uninstall.exe"
   !insertmacro MUI_STARTMENU_WRITE_END
 
 SectionEnd
 
 Section "Right-click menu" Shell
-  WriteRegStr HKCR "Directory\shell\Rename with Métamorphose2" "" ""
-  WriteRegStr HKCR "Directory\shell\Rename with Métamorphose2\command" "" "$INSTDIR\metamorphose2.exe %L"
+  WriteRegStr HKCR "Directory\shell\Rename with Métamorphose3" "" ""
+  WriteRegStr HKCR "Directory\shell\Rename with Métamorphose3\command" "" "$INSTDIR\metamorphose3.exe %L"
 SectionEnd
 
 Section "Desktop Shortcut" DShortCut
-  CreateShortCut "$DESKTOP\Métamorphose2.lnk" "$INSTDIR\metamorphose2.exe"
+  CreateShortCut "$DESKTOP\Métamorphose3.lnk" "$INSTDIR\metamorphose3.exe"
 SectionEnd
 
 Section /o "Quicklaunch Shortcut" QShortCut
-  CreateShortCut "$QUICKLAUNCH\Métamorphose2.lnk" "$INSTDIR\metamorphose2.exe"
+  CreateShortCut "$QUICKLAUNCH\Métamorphose3.lnk" "$INSTDIR\metamorphose3.exe"
 SectionEnd
 
 ;--------------------------------
@@ -144,7 +144,7 @@ SectionEnd
 
   ;Language strings
   LangString DESC_Application ${LANG_ENGLISH} "The main application files (required)."
-  LangString DESC_Shell ${LANG_ENGLISH} "Add this right-click menu option: 'Rename with Métamorphose2'."
+  LangString DESC_Shell ${LANG_ENGLISH} "Add this right-click menu option: 'Rename with Métamorphose3'."
   LangString DESC_DShortCut ${LANG_ENGLISH} "Create a Desktop shortcut."
   LangString DESC_QShortCut ${LANG_ENGLISH} "Create a Quickstart shortcut."
 
@@ -167,18 +167,18 @@ Section "un.Métamorphose" Uninstall
   ;Uninstall for all users
   SetShellVarContext all
 
-  Delete "$DESKTOP\Métamorphose2.lnk"
-  Delete "$QUICKLAUNCH\Métamorphose2.lnk"
+  Delete "$DESKTOP\Métamorphose3.lnk"
+  Delete "$QUICKLAUNCH\Métamorphose3.lnk"
 
   !insertmacro MUI_STARTMENU_GETFOLDER Application $MUI_TEMP
   RMDir /r "$SMPROGRAMS\$MUI_TEMP"
 
   RMDir /r "$INSTDIR"
 
-  ;DeleteRegKey HKCU "Software\metamorphose2"
-  DeleteRegKey HKLM "Software\metamorphose2"
-  DeleteRegKey HKCR "Directory\shell\Rename with Métamorphose2"
-  DeleteRegKey HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\metamorphose2"
+  ;DeleteRegKey HKCU "Software\metamorphose3"
+  DeleteRegKey HKLM "Software\metamorphose3"
+  DeleteRegKey HKCR "Directory\shell\Rename with Métamorphose3"
+  DeleteRegKey HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\metamorphose3"
 
 SectionEnd
 
@@ -187,7 +187,7 @@ Section /o "un.User files" UninstallUser
   ;remove config for current user
   SetShellVarContext current
   
-  RMDir /r "$APPDATA\.metamorphose2"
+  RMDir /r "$APPDATA\.metamorphose3"
 
 SectionEnd
 

@@ -1,5 +1,5 @@
 ***********************
-Métamorphose2 Changelog
+Métamorphose3 Changelog
 ***********************
 
 2.0.8.4 beta
@@ -78,7 +78,7 @@ Fixes/Changes:
   - Configs folder now defaults to user home (ticket 2803288).
   - Home folder in Windows no longer has leading period.
   - MAJOR rewrite of method names and code documentation, this makes
-      contributing to Métamorphose2 much easier and more pleasant than before.
+      contributing to Métamorphose3 much easier and more pleasant than before.
   - Begin setting some methods to 'private' for clearer view of modularity.
 
 Additions:

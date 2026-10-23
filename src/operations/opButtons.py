@@ -12,7 +12,7 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 
-import opParser
+from . import opParser
 import utils
 import wx
 
@@ -20,7 +20,7 @@ import wx
     wxID_PANELINS_NUM, wxID_PANELINSTIME, wxID_PANELSTATICTEXT1,
     wxID_PANELEXIF, wxID_PANELEXIFSELECT, wxID_PANELFOLDER,
     wxID_PANELFOLDERDEPTH
- ] = [wx.NewId() for __init_ctrls in range(11)]
+ ] = [wx.NewIdRef() for __init_ctrls in range(11)]
 
 
 class Panel(wx.Panel):

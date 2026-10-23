@@ -18,7 +18,6 @@ This is the main application.
 
 # needed modules:
 from __future__ import print_function
-import codecs
 import gettext
 import locale
 import os
@@ -27,7 +26,7 @@ import re
 import sys
 import time
 
-import EnhancedStatusBar as ESB
+from . import EnhancedStatusBar as ESB
 import about
 import app
 import classes
@@ -65,7 +64,7 @@ wxID_MENUPICKER_OK,
 
 wxID_MENUSETTINGS_PREFERENCES, wxID_MENUSETTINGS_LANG,
 
- ] = [wx.NewId() for __init_menu_edit in range(27)]
+ ] = [wx.NewIdRef() for __init_menu_edit in range(27)]
 
 
 class MySplitter(wx.SplitterWindow):
@@ -375,9 +374,9 @@ class MainWindow(wx.Frame):
     def __init_ctrls(self, prnt):
         wx.SystemOptions.SetOption('msw.notebook.themed-background', '0')
         if app.debug:
-            self.SetTitle(u"Métamorphose 2 v. %s -- DEBUG MODE" % app.version)
+            self.SetTitle(u"Métamorphose 3 v. %s -- DEBUG MODE" % app.version)
         else:
-            self.SetTitle(u"Métamorphose 2 (beta)")
+            self.SetTitle(u"Métamorphose 3 (beta)")
         self.SetBackgroundColour(wx.NullColour)
         self.SetAutoLayout(False)
         self.SetStatusBarPane(0)
@@ -455,7 +454,7 @@ class MainWindow(wx.Frame):
         # get language from file if not specified from command line
         if not app.language:
             try:  # see if language file exist
-                langIni = codecs.open(utils.get_user_path(u'language.ini'), 'r', 'utf-8')
+                langIni = open(utils.get_user_path(u'language.ini'), 'r', encoding='utf-8', newline='')
             except IOError:  # have user choose language
                 language = self.language_select(0)
             else:  # get language from file
@@ -478,14 +477,14 @@ class MainWindow(wx.Frame):
         wx.Locale(locales[language][0], wx.LOCALE_LOAD_DEFAULT)
 
         try:
-            Lang = gettext.translation(u'metamorphose2', app.locale_path(language),
+            Lang = gettext.translation(u'metamorphose3', app.locale_path(language),
                                        languages=[locales[language][1]])
         except IOError:
             print("Could not find the translation file for '%s'." % language)
             print("Try running messages/update_langs.sh\n")
             sys.exit(1)
 
-        Lang.install(unicode=True)
+        Lang.install()
 
         # set some globals
         if language not in rightToLeftLanguages:
@@ -497,7 +496,7 @@ class MainWindow(wx.Frame):
         app.language = language
         app.debug_print("Set language: " + app.language)
 
-        self.encoding = unicode(locale.getlocale()[1])
+        self.encoding = locale.getlocale()[1] or locale.getpreferredencoding(False) or u'utf-8'
         app.debug_print("Set encoding: " + self.encoding)
 
         # to get some language settings to display properly:
@@ -556,7 +555,7 @@ class MainWindow(wx.Frame):
         global picker
         import picker
         global bottomWindow
-        import bottomWindow
+        from . import bottomWindow
 
         # initialize preferences
         app.debug_print("======== Preferences =======")
@@ -570,13 +569,13 @@ class MainWindow(wx.Frame):
         # clear undo if set in preferences:
         if app.prefs.get(u'clearUndo'):
             try:
-                originalFile = codecs.open(utils.get_user_path(u'undo/original.bak'),
-                                           'w', "utf-8")
+                originalFile = open(utils.get_user_path(u'undo/original.bak'),
+                                    'w', encoding="utf-8", newline='')
                 originalFile.write('')
-                renamedFile = codecs.open(utils.get_user_path(u'undo/renamed.bak'),
-                                          'w', "utf-8")
+                renamedFile = open(utils.get_user_path(u'undo/renamed.bak'),
+                                   'w', encoding="utf-8", newline='')
                 renamedFile.write('')
-            except IOError, error:
+            except IOError as error:
                 utils.make_err_msg(_(u"%s\n\nCould not clear undo") % error,
                                    _(u"Error"))
                 pass
@@ -624,7 +623,7 @@ class MainWindow(wx.Frame):
         # if triggered from event, language has already been loaded,
         # and we will be changing it. No event = no language file
         if event == 0:
-            Title = u'\m/ (>_<) \m/'
+            Title = r'\m/ (>_<) \m/'
         else:
             Title = _(u"Language")
             event = app.language
@@ -640,9 +639,9 @@ class MainWindow(wx.Frame):
     def change_language(self, language, event):
         """Write given language to 'language.ini' file."""
         try:
-            langFile = codecs.open(utils.get_user_path(u'language.ini'), 'w', 'utf-8')
-        except IOError, error:
-            utils.make_err_msg(unicode(error), u"Error")
+            langFile = open(utils.get_user_path(u'language.ini'), 'w', encoding='utf-8', newline='')
+        except IOError as error:
+            utils.make_err_msg(str(error), u"Error")
             pass
         else:
             langFile.write(language)
@@ -699,7 +698,7 @@ class MainWindow(wx.Frame):
 
             # create file contents
             for original, renamed in self.toRename:
-                CSVfile += unicode(q + original[0] + q + sep + q + renamed[0] + q + '\n')
+                CSVfile += str(q + original[0] + q + sep + q + renamed[0] + q + '\n')
 
             if app.showTimes:
                 print("Export file contents for %s items: %s" % (len(self.toRename), (time.time() - t)))
@@ -709,7 +708,7 @@ class MainWindow(wx.Frame):
                 dlg = wx.FileDialog(self, message=_(u"Save current items as ..."),
                                     defaultDir='', defaultFile=u'.%s' % ext,
                                     wildcard=_(u"CSV file (*.%s)") % ext + u'|*.%s' % ext,
-                                    style=wx.SAVE | wx.OVERWRITE_PROMPT
+                                    style=wx.FD_SAVE | wx.FD_OVERWRITE_PROMPT
                                     )
                 if dlg.ShowModal() == wx.ID_OK:
                     # attempt to write file
@@ -719,7 +718,8 @@ class MainWindow(wx.Frame):
             else:
                 file = time.strftime("undo_%Y-%m-%d_%Hh%Mm%Ss",
                                      time.localtime()) + '.' + app.prefs.get('logFextension')
-                path = os.path.join(app.prefs.get(u'logLocation'), file)
+                logLocation = app.prefs.get(u'logLocation') or utils.get_user_path(u'undo')
+                path = os.path.join(logLocation, file)
                 utils.write_file(path, CSVfile)
 
     def import_items_from_text(self, event):
@@ -741,7 +741,7 @@ class MainWindow(wx.Frame):
         dlg = wx.FileDialog(
                             self, message=_(u"Import selection from ..."), defaultDir=path,
                             defaultFile=u'', wildcard=wildOnes,
-                            style=wx.OPEN | wx.CHANGE_DIR)
+                            style=wx.FD_OPEN | wx.FD_CHANGE_DIR)
 
         if dlg.ShowModal() == wx.ID_OK:
             original = []
@@ -756,7 +756,7 @@ class MainWindow(wx.Frame):
             else:
                 o = 0
                 r = 1
-            f = codecs.open(f, 'r', 'utf_8')
+            f = open(f, 'r', encoding='utf_8', newline='')
             i = 0
             for line in f.readlines():
                 i += 1

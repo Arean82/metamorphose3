@@ -28,7 +28,7 @@ build-stamp: configure-stamp
 
 	# Add here commands to compile the package.
 	#$(MAKE)
-	#docbook-to-man debian/metamorphose2.sgml > metamorphose2.1
+	#docbook-to-man debian/metamorphose3.sgml > metamorphose3.1
 
 	touch $@
 
@@ -48,8 +48,8 @@ install: build
 	dh_prep  
 	dh_installdirs
 
-	# Add here commands to install the package into debian/metamorphose2.
-	$(MAKE) DESTDIR=$(CURDIR)/debian/metamorphose2 install
+	# Add here commands to install the package into debian/metamorphose3.
+	$(MAKE) DESTDIR=$(CURDIR)/debian/metamorphose3 install
 
 
 # Build architecture-independent files here.

@@ -1,2 +1,2 @@
-?package(metamorphose2):needs="X11|text|vc|wm" section="Applications/see-menu-manual"\
-  title="metamorphose2" command="/usr/bin/metamorphose2"
+?package(metamorphose3):needs="X11|text|vc|wm" section="Applications/see-menu-manual"\
+  title="metamorphose3" command="/usr/bin/metamorphose3"

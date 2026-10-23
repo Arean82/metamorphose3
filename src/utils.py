@@ -17,7 +17,7 @@ Helper functions available throughout Metamorphose.
 """
 
 from __future__ import print_function
-import codecs
+import errno
 import locale
 import os
 import time
@@ -27,7 +27,7 @@ import wx
 import wx.html
 
 try:
-    import Image
+    from PIL import Image
 except ImportError:
     pass
 
@@ -79,10 +79,10 @@ def safe_makedir(dir):
         try:
             os.makedirs(dir)
         except OSError as error:
-            if error[0] == 17:
+            if error.errno == errno.EEXIST:
                 pass
             else:
-                make_err_msg(unicode(error), u"Error")
+                make_err_msg(str(error), u"Error")
                 pass
 
 
@@ -172,12 +172,12 @@ def write_file(path, data):
     except:
         pass
     try:
-        fp = codecs.open(path, 'w', 'utf_8')
+        fp = open(path, 'w', encoding='utf_8', newline='')
     except (IOError, OSError) as error:
-        make_err_msg(unicode(error), _(u"Error"))
+        make_err_msg(str(error), _(u"Error"))
         pass
     else:
-        fp.write(unicode(data))
+        fp.write(str(data))
         fp.close()
 
 
@@ -203,10 +203,8 @@ def dev_null(event):
 
 
 def udate(main, format, itemDateTime):
-    """Time encode/decode crap, a workaround for strftime not accepting unicode."""
-    #print(main.encoding)
-    udate = time.strftime(format.encode(main.encoding), itemDateTime)
-    return udate.decode(main.encoding)
+    """Format a date/time for display."""
+    return time.strftime(format, itemDateTime)
 
 
 def set_busy(busy):
@@ -220,7 +218,7 @@ def set_busy(busy):
 def get_encoding_choices(key):
     """Return valid encodings tuple for a given language type."""
     encodingLookup = {
-        _(u"Use System Default"): (u"%s" % locale.getlocale()[1], ),
+        _(u"Use System Default"): (locale.getlocale()[1] or locale.getpreferredencoding(False), ),
         _(u'All Languages / Unicode'): (
             u'utf_8', u'utf_16'
         ),

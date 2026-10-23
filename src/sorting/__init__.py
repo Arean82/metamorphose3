@@ -22,10 +22,10 @@ import re
 import sys
 
 import app
-from exif import EXIF
+import exifread as EXIF
 import classes
 import utils
-import wxSortingView
+from . import wxSortingView
 
 
 class Parameters(classes.Parameters):
@@ -78,7 +78,7 @@ class Core():
                 return False
             else:
                 try:
-                    datetime = unicode(data[ref[selection]])
+                    datetime = str(data[ref[selection]])
                 except KeyError:
                     return False
                 else:
@@ -108,7 +108,7 @@ class Core():
             # return the number in the name
             def _get_numb(x):
                 try:
-                    compare = float(re.sub('\D', '', x[0]))
+                    compare = float(re.sub(r'\D', '', x[0]))
                 except ValueError:
                     compare = x[0]
                 return compare

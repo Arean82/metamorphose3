@@ -13,7 +13,7 @@
 # GNU General Public License for more details.
 
 from __future__ import print_function
-import codecs
+import errno
 import os
 import platform
 import sys
@@ -45,7 +45,6 @@ class Core():
 
     def _show_rename_error(self, i, err, original, renamed):
         """Show renaming errors."""
-        err = err.decode(sys.getfilesystemencoding())
         # set item as bad
         main.toRename[i][1][1] = None
         self._set_display(i)
@@ -63,25 +62,20 @@ class Core():
         """
         try:
             shutil1.move(original[0], renamed[0], True)
-        except IOError as (errNumb, err):
-            app.debug_print("IOError : %s, %s" % (errNumb, err))
+        except OSError as e:
+            app.debug_print("OSError : %s, %s" % (e.errno, e.strerror))
             # may need to create dirs first
-            if errNumb == 2 and not os.path.exists(os.path.dirname(renamed[0])):
+            if e.errno == errno.ENOENT and not os.path.exists(os.path.dirname(renamed[0])):
                 try:
                     os.makedirs(os.path.dirname(renamed[0]))
-                except OSError as (n, err):
-                    self._show_rename_error(i, err, original, renamed)
+                except OSError as e2:
+                    self._show_rename_error(i, e2.strerror, original, renamed)
                     return 'makedirs'
                 else:
                     return self._rename_item(i, original, renamed, refresh_int)
-            else:
-                self._show_rename_error(i, err, original, renamed)
-                return True
-        except OSError as (errNumb, err):
-            app.debug_print("OSError : %s, %s" % (errNumb, err))
             # don't stop for a read-only error if the renamed item exists
-            if not (errNumb == 30 and os.path.exists(renamed[0])):
-                self._show_rename_error(i, err, original, renamed)
+            elif not (e.errno == errno.EROFS and os.path.exists(renamed[0])):
+                self._show_rename_error(i, e.strerror, original, renamed)
                 return True
 
         # set item as renamed
@@ -110,7 +104,7 @@ class Core():
         """After pre-renaming checks are completed, rename the list of items."""
         # calculate refresh settings
         count = len(main.toRename)
-        count = count / 25 + 1
+        count = count // 25 + 1
         if count > int(app.prefs.get('renRefreshMin')):
             count = int(app.prefs.get('renRefreshMin'))
 
@@ -118,7 +112,7 @@ class Core():
         def exists(item):
             return os.path.exists(item)
         def join(a, b, c):
-            return unicode(os.path.join(a, b, c))
+            return str(os.path.join(a, b, c))
 
         warn = False
         if event != u'undo':
@@ -208,14 +202,13 @@ class Core():
 
             # open undo files for writing
             try:
-                self.originalFile = codecs.open(utils.get_user_path(u'undo/original.bak'), 'w', "utf-8")
-                self.renamedFile = codecs.open(utils.get_user_path(u'undo/renamed.bak'), 'w', "utf-8")
-            except IOError as (n, strerror):
-                msg = strerror + _(u"\nMake sure 'undo' directory exists and is read/write\n\nYou will not be able to undo!!\nDo you want to continue??")
+                self.originalFile = open(utils.get_user_path(u'undo/original.bak'), 'w', encoding="utf-8", newline='')
+                self.renamedFile = open(utils.get_user_path(u'undo/renamed.bak'), 'w', encoding="utf-8", newline='')
+            except OSError as e:
+                msg = e.strerror + _(u"\nMake sure 'undo' directory exists and is read/write\n\nYou will not be able to undo!!\nDo you want to continue??")
                 title = _(u"Problem with undo!")
                 if not utils.make_yesno_dlg(msg, title):
                     error = 'cancelled'
-                dlg.Destroy()
 
         # enough checking, DO IT !!
         if not error:
@@ -267,10 +260,10 @@ class Core():
         renamed = []
         utils.set_busy(True)
         try:
-            originalFile = codecs.open(utils.get_user_path(u'undo/original.bak'), 'r',
-                                       'utf-8')
-            renamedFile = codecs.open(utils.get_user_path(u'undo/renamed.bak'), 'r',
-                                      'utf-8')
+            originalFile = open(utils.get_user_path(u'undo/original.bak'), 'r',
+                                encoding='utf-8', newline='')
+            renamedFile = open(utils.get_user_path(u'undo/renamed.bak'), 'r',
+                               encoding='utf-8', newline='')
             for line in originalFile:
                 original.append([line.strip(), False])
             for line in renamedFile:

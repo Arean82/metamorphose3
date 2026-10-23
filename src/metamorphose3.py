@@ -38,26 +38,19 @@ import app
 
 syspath = sys.path[0]
 
-if not hasattr(sys, "frozen"):
-    try:
-        import wxversion
-    except ImportError:
-        print("\nwxPython required!\n")
-        sys.exit()
-
 
 def usage():
     """
     Print CLI usage and options to screen.
     """
     print()
-    print("Metamorphose 2.%s" % app.version)
+    print("Metamorphose %s" % app.version)
     print("Copyright (C) 2006-2015 ianare sevi")
-    print("<https://github.com/metamorphose/metamorphose2>\n")
+    print("<https://github.com/Arean82/metamorphose3>\n")
     print("Metamorphose is a graphical mass renaming program for files and folders.")
     print("There is support for automating GUI tasks via command line.\n")
-    print("metamorphose2 [/path/to/open/spaces ok]")
-    print("metamorphose2 [-t] [-d] [-p /path/to/open] [[-c /path/to/file.cfg] [-a level (0-3)]] [-l language]")
+    print("metamorphose3 [/path/to/open/spaces ok]")
+    print("metamorphose3 [-t] [-d] [-p /path/to/open] [[-c /path/to/file.cfg] [-a level (0-3)]] [-l language]")
     print()
     print("-h,  --help       Show help screen and exit.")
     print("-t,  --timer      Show time taken to complete operations.")
@@ -73,10 +66,9 @@ def usage():
     print("                    en_US")
     print("                    fr")
     print("                    es")
-    print("-w=, --wxversion  Specify wxPython Version - use at your own risk!")
     print()
     print("If no other options are given, you may specify a path to open:")
-    print("$ metamorphose2 /srv/samba/Windows Likes Spaces")
+    print("$ metamorphose3 /srv/samba/Windows Likes Spaces")
     print()
     sys.exit()
 
@@ -94,8 +86,8 @@ def get_options():
     """
     Get options passed in at the command line
     """
-    short_options = "htdp:vc:va:vl:vw:v"
-    long_options = ["help", "timer", "debug", "path=", "config=", "auto=", "language=", "wx="]
+    short_options = "htdp:c:a:l:"
+    long_options = ["help", "timer", "debug", "path=", "config=", "auto=", "language="]
     try:
         opts, args = getopt(sys.argv[1:], short_options, long_options)
     except GetoptError as err:
@@ -106,8 +98,6 @@ def get_options():
         'path': False,
         'configFilePath': False,
     }
-
-    wx_version = ('2.8', '3.0')
 
     if sys.argv[1:] != [] and opts == []:
         options['path'] = ''
@@ -140,13 +130,11 @@ def get_options():
                 app.autoModeLevel = int(level)
         elif o in ("-l", "--language"):
             app.language = strip_leading(a)
-        elif not hasattr(sys, "frozen") and o in ("-w", "--wxversion"):
-            wx_version = strip_leading(a)
 
-    return wx_version, options
+    return options
 
 
-def main(wx_version, cli_options):
+def main(cli_options):
     if platform.system() == 'Linux':
         try:
             # to fix some KDE display issues:
@@ -155,20 +143,7 @@ def main(wx_version, cli_options):
         except (ValueError, KeyError):
             pass
 
-    if not hasattr(sys, "frozen"):
-        try:
-            wxversion.select(wx_version)
-        except wxversion.VersionError:
-            print("\nFailed to load wxPython version %s!\n" % wx_version)
-            sys.exit()
-
     import wx
-    if 'unicode' not in wx.PlatformInfo:
-        print("\nInstalled version: %s\nYou need a unicode build of wxPython to run Metamorphose 2.\n"
-              % wxversion.getInstalled())
-
-    # wxversion changes path
-    sys.path[0] = syspath
 
     import MainWindow
 
@@ -184,7 +159,7 @@ def main(wx_version, cli_options):
 
 
 if __name__ == '__main__':
-    wx_version, cli_options = get_options()
-    main(wx_version, cli_options)
+    cli_options = get_options()
+    main(cli_options)
 
 

@@ -27,7 +27,7 @@ import wx
     wxID_SORTINGPANELSTATSORTCHOICE, wxID_SORTINGPANELUPBUTTON,
     wxID_SORTINGPANELUPMORE, wxID_SORTINGPANELUPTOP,
     wxID_SORTINGPANELNORMALSORT,
- ] = [wx.NewId() for __init_ctrls in range(22)]
+ ] = [wx.NewIdRef() for __init_ctrls in range(22)]
 
 
 class Panel(wx.Panel):

@@ -535,7 +535,7 @@ lookup = {
 
 
 # The full ASCII set
-allow = u" :!\"#$%&'()*+,-./0123456789;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~"
+allow = u" :!\"#$%&'()*+,-./0123456789;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~"
 
 
 def test(showOriginal=True):
@@ -567,7 +567,7 @@ def full_convert(s, rplc=u"_"):
         if i in allow:
             rs += i
         # char in lookup table, strip accent
-        elif lookup.has_key(i):
+        elif i in lookup:
             rs += lookup[i]
         # unknown char, squash
         else:

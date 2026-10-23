@@ -87,7 +87,7 @@ class ProgressDialog(wx.ProgressDialog):
         
         if type(items) is not type(1):
             items = len(items)
-        message = message.replace(u'%%%', unicode(items))
+        message = message.replace(u'%%%', str(items))
 
         if prefs.get('showProgressDialog') and items > int(prefs.get(u'itemCountForProgDialog')):
             self.active = True

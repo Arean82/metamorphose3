@@ -1,0 +1,1 @@
+"C:\python26\python.exe" "src\metamorphose3.py"

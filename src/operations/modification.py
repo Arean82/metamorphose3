@@ -20,16 +20,16 @@ Uses search panel.
 
 import sre_constants
 
-import accentStrip
-from operation import Operation
-import search
+from . import accentStrip
+from .operation import Operation
+from . import search
 import utils
 import wx
 
 [wxID_PANEL, wxID_PANELOTHER_OPERATION_VALUE, wxID_PANELSTATICTEXT1,
     wxID_PANELOTHERMOD, wxID_PANELCASEMOD, wxID_PANELCASE_OPERATION_VALUE,
     wxID_PANELENCODINGGROUP, wxID_PANELFIXENCODE, wxID_PANELENCODINGSELECT
- ] = [wx.NewId() for __init_ctrls in range(9)]
+ ] = [wx.NewIdRef() for __init_ctrls in range(9)]
 
 # taken from urllib standard python library
 _hextochr = dict(('%02x' % i, chr(i)) for i in range(256))
@@ -156,7 +156,7 @@ class OpPanel(Operation):
         Taken from urllib standard python library.
         """
         res = s.split('%')
-        for i in xrange(1, len(res)):
+        for i in range(1, len(res)):
             item = res[i]
             try:
                 res[i] = _hextochr[item[:2]] + item[2:]
@@ -263,7 +263,7 @@ class OpPanel(Operation):
                 match = match.group()
             enc = self.encodingSelect.GetStringSelection()
             match = match.encode(enc, 'backslashreplace')
-            match = unicode(match, 'utf_8', 'replace')
+            match = match.decode('utf_8', 'replace')
             return match
 
         # set possible modifications and selected operation:

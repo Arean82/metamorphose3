@@ -15,8 +15,8 @@
 import platform
 import sys
 
-import opButtons
-import regExpr
+from . import opButtons
+from . import regExpr
 import wx
 
 [wxID_PANEL, wxID_PANELAFTER, wxID_PANELBARE, wxID_PANELBAREI,
@@ -27,7 +27,7 @@ import wx
     wxID_PANELSUFFIX, wxID_PANELBETWEEN, wxID_PANELBTWTEXTMATCH1,
     wxID_PANELBTWTEXTMATCH2, wxID_PANELBTWRE, wxID_PANELBTWREI,
     wxID_PANELBTWREU, wxID_PANELSTATICTEXT6, wxID_PANELSTATICTEXT7
- ] = [wx.NewId() for __init_ctrls in range(24)]
+ ] = [wx.NewIdRef() for __init_ctrls in range(24)]
 
 
 class Panel(wx.Panel):

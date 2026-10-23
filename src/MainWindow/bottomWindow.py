@@ -18,7 +18,7 @@ The bottom half of the main window.
 import os
 
 import app
-import editDialog
+from . import editDialog
 import utils
 import wx
 import wx.lib.buttons as buttons
@@ -28,7 +28,7 @@ wxID_BOTTOM_WINDOW, wxID_AUTOPREVIEW, wxID_GO,
 wxID_MENUEDIT, wxID_MENUREMOVE, wxID_MENUREMOVEANDPREVIEW,
 wxID_THUMBSIZE, wxID_AUTOPREVIEW,
 wxID_IMGPREVIEW, wxID_UNDOREDO,
-] = [wx.NewId() for _init_coll_menuEdit_Items in range(10)]
+] = [wx.NewIdRef() for _init_coll_menuEdit_Items in range(10)]
 
 
 class ListCtrl(wx.ListCtrl):
@@ -202,7 +202,7 @@ class ListCtrl(wx.ListCtrl):
         if original[1]:
             # show preview if available
             if app.prefs.get('showPreviewIcons') and\
-                pickerList.thumbnails.has_key(original[0]):
+                original[0] in pickerList.thumbnails:
                     img = pickerList.thumbnails[original[0]]
             else:
                 img = 1

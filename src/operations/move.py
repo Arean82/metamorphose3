@@ -15,9 +15,9 @@
 import platform
 import sys
 
-from operation import Operation
-import regExpr
-import search
+from .operation import Operation
+from . import regExpr
+from . import search
 import utils
 import wx
 
@@ -25,7 +25,7 @@ import wx
     wxID_PANELREPL_MOVE_TXT, wxID_PANELREPL_MOVE_TXT_MOD,
     wxID_PANELREPL_MOVE_TXT_VALUE, wxID_PANELSTATICTEXT6, wxID_PANELSTATICBOX1,
     wxID_PANELSTATICTEXT5
- ] = [wx.NewId() for __init_ctrls in range(9)]
+ ] = [wx.NewIdRef() for __init_ctrls in range(9)]
 
 
 class OpPanel(Operation):

@@ -13,7 +13,7 @@
 # GNU General Public License for more details.
 
 import classes
-import wxErrorsView
+from . import wxErrorsView
 import app
 
 

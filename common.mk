@@ -2,7 +2,7 @@
 DESTDIR=
 PREFIX=/usr
 
-PACKAGE=metamorphose2
+PACKAGE=metamorphose3
 
 # change to 1 to remove all metamorphose user files
 remusr=0

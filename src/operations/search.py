@@ -12,7 +12,7 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 
-import regExpr
+from . import regExpr
 import utils
 import wx
 
@@ -23,7 +23,7 @@ import wx
     wxID_PANELBETWEEN, wxID_PANELBTWTEXTMATCH1,
     wxID_PANELBTWTEXTMATCH2, wxID_PANELSTATICTEXT6, wxID_PANELSTATICTEXT7,
     wxID_PANELSTATICTEXT1
- ] = [wx.NewId() for __init_ctrls in range(15)]
+ ] = [wx.NewIdRef() for __init_ctrls in range(15)]
 
 
 class Panel(wx.Panel):

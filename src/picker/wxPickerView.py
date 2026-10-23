@@ -37,7 +37,7 @@ except ImportError:
     wxID_PICKERPANELWALKIT, wxID_PICKERPANELFILTERBYRE, wxID_SELECTIONAREA,
     wxID_PICKERPANELIGNORECASE, wxID_PICKERPANELUSELOCALE, wxID_PICKERPANELWALKDEPTH,
     wxID_PICKERPANELSTATICTEXT2,
- ] = [wx.NewId() for __init_ctrls in range(23)]
+ ] = [wx.NewIdRef() for __init_ctrls in range(23)]
 
 
 # Panel refers to instance as dirpicker
@@ -165,10 +165,10 @@ class ItemList(wx.ListCtrl):
     def __image_to_pil(self, source, thumbSize):
         """Create a thumbnail from an image file."""
         source = Image.open(source, 'r')
-        source.thumbnail(thumbSize, Image.ANTIALIAS)
-        image = apply(wx.EmptyImage, source.size)
-        image.SetData(source.convert("RGB").tostring())
-        return wx.BitmapFromImage(image)
+        source.thumbnail(thumbSize, Image.LANCZOS)
+        image = wx.Image(*source.size)
+        image.SetData(source.convert("RGB").tobytes())
+        return wx.Bitmap(image)
 
     def on_item_selected(self, event):
         """show selected items then add or remove from renaming list."""
@@ -258,7 +258,7 @@ class ItemList(wx.ListCtrl):
 
 
     def OnItemDeselected(self, evt):
-        print self.items[evt.m_itemIndex]
+        print(self.items[evt.m_itemIndex])
         #print "OnItemDeselected: %s" % evt.m_itemIndex
 
     #---------------------------------------------------
@@ -411,7 +411,7 @@ class Panel(wx.Panel):
                                      name=u'useLocale', parent=self)
         self.useLocale.SetValue(True)
         self.useLocale.Enable(False)
-        self.useLocale.SetToolTipString(_(u"Unicode match (\w matches 'a','b','c', etc)"))
+        self.useLocale.SetToolTipString(_(r"Unicode match (\w matches 'a','b','c', etc)"))
         self.useLocale.Bind(wx.EVT_CHECKBOX, self._refresh_items,
                             id=wxID_PICKERPANELUSELOCALE)
 

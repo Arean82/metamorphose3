@@ -16,10 +16,10 @@
 Example Module.
 """
 
-from operation import Operation
+from .operation import Operation
 import wx
 
-[wxID_PANEL, wxID_PANELSTATICTEXT1] = [wx.NewId() for __init_ctrls in range(2)]
+[wxID_PANEL, wxID_PANELSTATICTEXT1] = [wx.NewIdRef() for __init_ctrls in range(2)]
 
 
 class OpPanel(Operation):

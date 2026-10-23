@@ -12,12 +12,12 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 
-import opButtons
-import search
+from . import opButtons
+from . import search
 import wx
 
 [wxID_PANEL, wxID_PANELREPL_TXT, wxID_PANELSTATICTEXT1, wxID_PANELSTATICBOX1
- ] = [wx.NewId() for __init_ctrls in range(4)]
+ ] = [wx.NewIdRef() for __init_ctrls in range(4)]
 
 
 class Panel(wx.Panel):

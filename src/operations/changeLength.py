@@ -12,13 +12,13 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 
-from operation import Operation
+from .operation import Operation
 import wx
 
 [wxID_PANEL, wxID_PANELMOD_LENGTH, wxID_PANELMOD_LENGTH_DIRECTION,
     wxID_PANELMOD_LENGTH_PAD, wxID_PANELMOD_LENGTH_POSITION,
     wxID_PANELMOD_LENGTH_TYPE, wxID_PANELSTATICBOX1, wxID_MAINPANELMOD_LENGTH
- ] = [wx.NewId() for __init_ctrls in range(8)]
+ ] = [wx.NewIdRef() for __init_ctrls in range(8)]
 
 
 class OpPanel(Operation):
@@ -169,7 +169,7 @@ class OpPanel(Operation):
             #padding by inserting at position:
             else:
                 padSize = width - len(newName)
-                newName = newName[:position] + unicode(padChar * padSize) + \
+                newName = newName[:position] + str(padChar * padSize) + \
                     newName[position:]
             return newName
 

@@ -76,14 +76,14 @@ greek_digits = [u',α,β,γ,δ,ε,ϛ,ζ,η,θ',
     u',ι,κ,λ,μ,ν,ξ,ο,π,ϟ',
     u',ρ,σ,τ,υ,φ,χ,ψ,ω,ϡ']
 
-greek_digits = map(lambda x: x.split(','), greek_digits)
+greek_digits = list(map(lambda x: x.split(','), greek_digits))
 
 
 def int2greek(number, numbersign=True, upper=False, stigma=True, arch_qoppa=False):
     """Convert integer to Greek numeral."""
     number = str(number).lstrip('-')
     if not number.isdigit():
-        raise Error, 'Input must be an integer'
+        raise Error('Input must be an integer')
 
     if not stigma:
         greek_digits[0][6] = u'στ'

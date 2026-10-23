@@ -1,4 +1,11 @@
-metamorphose2 (0.8.2-1) unstable; urgency=low
+metamorphose3 (3.0.0-1) unstable; urgency=medium
+
+  * Python 3 port.
+  * Renamed from Métamorphose 2 to Métamorphose 3.
+
+ -- Arean <arean@synorastudio.in>  Fri, 23 Oct 2026 15:12:00 +0530
+
+metamorphose3 (0.8.2-1) unstable; urgency=low
 
   * Fix bug folder periods (ticket 3148632).
   * Continue better centralized variable storage.
@@ -9,7 +16,7 @@ metamorphose2 (0.8.2-1) unstable; urgency=low
 
  -- ianaré sévi <ianare@gmail.com>  Fri, 07 Jan 2011 01:21:56 +0100
 
-metamorphose2 (0.8.1-1) unstable; urgency=low
+metamorphose3 (0.8.1-1) unstable; urgency=low
 
   * Fix bug with duplicate rename (ticket 3095633).
   * Fix bug with config file load/save (ticket 3148071).
@@ -21,14 +28,14 @@ metamorphose2 (0.8.1-1) unstable; urgency=low
 
  -- ianaré sévi <ianare@gmail.com>  Thu, 30 Dec 2010 14:56:08 +0100 
 
-metamorphose2 (0.8.0-1) unstable; urgency=low
+metamorphose3 (0.8.0-1) unstable; urgency=low
 
   * Miscellaneous minor bug fixes.
   * Track numbers are now auto-padded with 0 when needed.
   * Speed and memory usage improvements to error panel.
   * Configs folder now defaults to user home (ticket 2803288).
   * Home folder in Windows no longer has leading period.
-  * MAJOR rewrite of method names and code documentation, this makes contributing to Métamorphose2 much easier and more pleasant than before.
+  * MAJOR rewrite of method names and code documentation, this makes contributing to Métamorphose3 much easier and more pleasant than before.
   * Begin setting some methods to 'private' for clearer view of modularity.
   * Allow changing highlight colors (ticket 2783757)
   * Copy file name in directory (ticket 3019859).

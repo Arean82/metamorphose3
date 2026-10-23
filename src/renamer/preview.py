@@ -129,7 +129,7 @@ class Core():
         #------------ ERRORS: ---------------#
 
         # remove os-specific path separator
-        renamedItem = renamedItem.replace(unicode(os.sep), '')
+        renamedItem = renamedItem.replace(str(os.sep), '')
 
         # remove or flag invalid characters (depends on user settings)
         if self.prefs.get(u'useWinChars'):
@@ -180,8 +180,8 @@ class Core():
         # blank file name, but extension is there
         # check original name too, to avoid flagging hidden files in *nix.
         leaf = os.path.basename(itemToRename)
-        newBlank = re.search("^\..+", renamedItem)
-        oldBlank = re.search("^\..+", leaf)
+        newBlank = re.search(r"^\..+", renamedItem)
+        oldBlank = re.search(r"^\..+", leaf)
 
         if  (newBlank != None and oldBlank == None) and ec not in warn\
             and ec not in bad and os.path.isfile(itemToRename):
@@ -256,7 +256,7 @@ class Core():
             return os.path.splitext(item)
 
         def join(newPath, renamedItem):
-            return unicode(os.path.join(newPath, renamedItem))
+            return str(os.path.join(newPath, renamedItem))
 
         # test for numbering panel
         hasNumbering = False

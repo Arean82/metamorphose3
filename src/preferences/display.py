@@ -18,7 +18,7 @@ import wx
     wxID_PANELSHOWPREVIEWHIGHLIGHT, wxID_PANELSHOWPREVIEWICONS,
     wxID_PANELSHOWPROGRESSDIALOG, wxID_PANELSTATICTEXT1, wxID_PANELSTATICTEXT2,
     wxID_PANELSTATICTEXT3, wxID_PANELONLYSHOWCHANGEDITEMS
- ] = [wx.NewId() for __init_ctrls in range(10)]
+ ] = [wx.NewIdRef() for __init_ctrls in range(10)]
 
 
 class Panel(wx.Panel):

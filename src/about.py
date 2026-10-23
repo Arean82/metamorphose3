@@ -19,7 +19,7 @@ import classes
 import utils
 import wx
 import wx.lib.buttons
-import wx.lib.hyperlink as hl
+import wx.adv
 
 
 def create(parent):
@@ -28,20 +28,20 @@ def create(parent):
 [wxID_ABOUT, wxID_ABOUTCLOSE, wxID_ABOUTCOPYRIGHT, wxID_PANELDONATEBUTTON,
     wxID_ABOUTGREET, wxID_ABOUTVERSION, wxID_ABOUTLINK, wxID_ABOUTDONATE,
     wxID_ABOUTWXVERSION, wxID_PANELCREDITSBUTTON, wxID_PANELLICENSEBUTTON
- ] = [wx.NewId() for __init_ctrls in range(11)]
+ ] = [wx.NewIdRef() for __init_ctrls in range(11)]
 
 
 class About(wx.Dialog):
     """The about dialog."""
 
     def _get_wxversion(self):
-	"""Get the wxPython Version."""
-	wxVer = ""
-	for x in wx.VERSION:
-	    wxVer = wxVer + str(x) + "."
-	wxVer = wxVer.rstrip(".")
-	return wxVer
-  
+        """Get the wxPython Version."""
+        wxVer = ""
+        for x in wx.VERSION:
+            wxVer = wxVer + str(x) + "."
+        wxVer = wxVer.rstrip(".")
+        return wxVer
+      
     def __init_sizer(self):
         bottomRow = wx.BoxSizer(wx.HORIZONTAL)
         bottomRow.Add(self.bugReport, 0, wx.ALIGN_CENTER | wx.RIGHT)
@@ -73,13 +73,13 @@ class About(wx.Dialog):
         fontFamily = fontParams['family']
         fontStyle = fontParams['style']
 
-        self.SetFont(wx.Font(fontSize + 1, fontFamily, fontStyle, wx.NORMAL, False, u'Times New Roman'))
+        self.SetFont(wx.Font(fontSize + 1, fontFamily, fontStyle, wx.FONTWEIGHT_NORMAL, False, u'Times New Roman'))
         self.Center(wx.HORIZONTAL | wx.VERTICAL)
         self.SetThemeEnabled(True)
 
         self.greet = wx.StaticText(id=wxID_ABOUTGREET,
-                                   label=u"Métamorphose 2", name=u'greet', parent=self)
-        self.greet.SetFont(wx.Font(fontSize + 4, fontFamily, fontStyle, wx.BOLD, False))
+                                   label=u"Métamorphose 3", name=u'greet', parent=self)
+        self.greet.SetFont(wx.Font(fontSize + 4, fontFamily, fontStyle, wx.FONTWEIGHT_BOLD, False))
 
         self.CLOSE = wx.BitmapButton(id=wxID_ABOUTCLOSE,
                                      bitmap=wx.Bitmap(utils.icon_path(u'metamorphose128.png'), wx.BITMAP_TYPE_PNG),
@@ -90,12 +90,12 @@ class About(wx.Dialog):
         self.copyright = wx.StaticText(id=wxID_ABOUTCOPYRIGHT,
                                        label=u"Copyright © 2006-2015 Ianaré Sévi", name=u'copyright',
                                        parent=self)
-        self.copyright.SetFont(wx.Font(fontSize + 2, fontFamily, fontStyle, wx.BOLD, False))
+        self.copyright.SetFont(wx.Font(fontSize + 2, fontFamily, fontStyle, wx.FONTWEIGHT_BOLD, False))
 
         self.version = wx.StaticText(id=wxID_ABOUTVERSION,
                                      label=_(u"Version: %s") % app.version,
                                      name=u'version', parent=self)
-        self.version.SetFont(wx.Font(fontSize + 2, fontFamily, fontStyle, wx.BOLD, False))
+        self.version.SetFont(wx.Font(fontSize + 2, fontFamily, fontStyle, wx.FONTWEIGHT_BOLD, False))
 
         self.wxVersion = wx.StaticText(id=wxID_ABOUTWXVERSION,
                                        label=_(u"Using Python %s, wxPython %s") % (
@@ -103,23 +103,23 @@ class About(wx.Dialog):
                                            self._get_wxversion()
                                        ),
                                        name=u'version', parent=self)
-        self.wxVersion.SetFont(wx.Font(fontSize + 1, fontFamily, fontStyle, wx.NORMAL, False))
+        self.wxVersion.SetFont(wx.Font(fontSize + 1, fontFamily, fontStyle, wx.FONTWEIGHT_NORMAL, False))
 
-        self.link = hl.HyperLinkCtrl(self, wxID_ABOUTLINK, _(u"Metamorphose Home Page"),
+        self.link = wx.adv.HyperlinkCtrl(self, wxID_ABOUTLINK, _(u"Metamorphose Home Page"),
                                      URL=u'http://file-folder-ren.sourceforge.net/', style=0)
 
-        self.bugReport = hl.HyperLinkCtrl(self, wxID_ABOUTLINK, _(u"GitHub Project Page"),
-                                          URL=u'https://github.com/metamorphose/metamorphose2')
+        self.bugReport = wx.adv.HyperlinkCtrl(self, wxID_ABOUTLINK, _(u"GitHub Project Page"),
+                                          URL=u'https://github.com/Arean82/metamorphose3')
         self.bugReport.Show(True)
 
         self.donateButton = wx.Button(id=wxID_PANELDONATEBUTTON,
                                       label=_(u"Donate"), name=u'donateButton', parent=self)
-        self.donateButton.SetFont(wx.Font(fontSize + 4, fontFamily, fontStyle, wx.BOLD, False,
+        self.donateButton.SetFont(wx.Font(fontSize + 4, fontFamily, fontStyle, wx.FONTWEIGHT_BOLD, False,
                                           u'Times New Roman'))
         self.donateButton.Bind(wx.EVT_BUTTON, self.on_donate_button,
                                id=wxID_PANELDONATEBUTTON)
 
-        self.donate = hl.HyperLinkCtrl(self, wxID_ABOUTDONATE, _(u"Donate"),
+        self.donate = wx.adv.HyperlinkCtrl(self, wxID_ABOUTDONATE, _(u"Donate"),
                                        URL=u'http://sourceforge.net/donate/index.php?group_id=146403')
         self.donate.Show(False)
 

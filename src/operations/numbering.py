@@ -24,7 +24,7 @@ import wx
     wxID_PANELSTATICTEXT1, wxID_PANELSTATICTEXT3, wxID_PANELSTATICTEXT5,
     wxID_PANELSTATICTEXT6, wxID_PANELSTATICTEXT7, wxID_PANELSTEP,
     wxID_PANELSTYLE, wxID_PANELSPECIAL, wxID_PANELRINCREMENTONDIFF,
- ] = [wx.NewId() for __init_ctrls in range(30)]
+ ] = [wx.NewIdRef() for __init_ctrls in range(30)]
 
 
 class Panel(wx.Panel):
@@ -227,14 +227,14 @@ class Panel(wx.Panel):
 
         self.asc = wx.RadioButton(id=wxID_PANELASC, label=_(u"+"), name=u'asc',
                                   parent=self, style=wx.RB_GROUP)
-        self.asc.SetFont(wx.Font(17, wx.SWISS, wx.NORMAL, wx.BOLD, False))
+        self.asc.SetFont(wx.Font(17, wx.FONTFAMILY_SWISS, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD, False))
         self.asc.SetValue(True)
         self.asc.SetToolTipString(_(u"Increase counting number"))
         self.asc.Bind(wx.EVT_RADIOBUTTON, main.show_preview)
 
         self.desc = wx.RadioButton(id=wxID_PANELDESC, label=_(u"-"),
                                    name=u'desc', parent=self, style=0)
-        self.desc.SetFont(wx.Font(15, wx.SWISS, wx.NORMAL, wx.BOLD, False,
+        self.desc.SetFont(wx.Font(15, wx.FONTFAMILY_SWISS, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD, False,
                           u'Impact'))
         self.desc.SetValue(False)
         self.desc.SetToolTipString(_(u"Decrease counting number"))

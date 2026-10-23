@@ -1,5 +1,5 @@
 **************
-Métamorphose 2
+Métamorphose 3
 **************
 
 Métamorphose is a graphical mass renaming program for files and folders.
@@ -20,11 +20,10 @@ These are the command line options::
                       en_US
                       fr
                       es
-  -w=, --wxversion  Specify wxPython Version - use at your own risk!
 
 If no other options are given, you may specify a path to open::
 
-  $ metamorphose2 /srv/samba/Windows Likes Spaces
+  $ metamorphose3 /srv/samba/Windows Likes Spaces
 
 ===================
 Running from Source
@@ -41,7 +40,7 @@ Cloning
 
 Cloning the sources from the remote::
 
-  git clone https://github.com/metamorphose/metamorphose2.git
+  git clone https://github.com/Arean82/metamorphose3.git
 
 Submodules are used, so after cloning don't forget to check them out::
 
@@ -51,9 +50,10 @@ Submodules are used, so after cloning don't forget to check them out::
 Requirements
 ============
 
-- Python 2.6 or 2.7 (*not* compatible with 3.x)
-- wxPython 2.8 (preferred) or 3.0
-- Python Imaging Library (PIL) 1.1.6 or greater **or** Pillow 2.3.0 or greater
+- Python 3.12 or greater
+- wxPython 4.2 or greater (Phoenix)
+- Pillow 9.0 or greater
+- exifread 3.0 or greater
 
 
 Running
@@ -61,11 +61,11 @@ Running
 
 Create or update the language files::
 
-  messages/update_langs.sh
+  make -C messages build
 
 Launch the application::
 
-  ./metamorphose2
+  ./metamorphose3
 
 
 Installing
@@ -78,13 +78,13 @@ As root::
 Under Linux & freeBSD
 The makefile should take care of everything for you, it is architecture and distro independant.
 
-Métamorphose will be installed in ``/usr/share/metamorphose2``, you can run it with::
+Métamorphose will be installed in ``/usr/share/metamorphose3``, you can run it with::
 
-  metamorphose2
+  metamorphose3
 
 and access the man page with::
 
-  man metamorphose2
+  man metamorphose3
 
 If you are using a freedesktop.org compatible window manager (like Gnome or KDE),
 there should be an entry in ``Applications`` -> ``Accessories``.
@@ -94,9 +94,9 @@ Removing
 ========
 Remove the user-specific files here:
 
-- Windows: ``C:\Documents and Settings\USERNAME\Application Data\.metamorphose2``
-- Linux/BSD: ``~/.metamorphose2``
-- Mac: ``/Library/Application Support/.metamorphose2``
+- Windows: ``C:\Documents and Settings\USERNAME\Application Data\.metamorphose3``
+- Linux/BSD: ``~/.metamorphose3``
+- Mac: ``/Library/Application Support/.metamorphose3``
 
 In Linux & BSD, if you have the sources::
 

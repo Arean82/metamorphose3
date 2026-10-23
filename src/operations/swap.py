@@ -12,8 +12,8 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 
-from operation import Operation
-import search
+from .operation import Operation
+from . import search
 import utils
 import wx
 
@@ -22,7 +22,7 @@ import wx
     wxID_PANELREPL_MOVE_TXT_RE, wxID_PANELREPL_MOVE_TXT_VALUE,
     wxID_PANELSTATICTEXT6, wxID_PANELSTATICBOX1, wxID_PANELREPL_MOVE_TXT_REU,
     wxID_PANELREPL_MOVE_TXT_REI, wxID_PANELSTATICTEXT5
- ] = [wx.NewId() for __init_ctrls in range(12)]
+ ] = [wx.NewIdRef() for __init_ctrls in range(12)]
 
 
 class OpPanel(Operation):

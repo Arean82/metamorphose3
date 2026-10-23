@@ -29,7 +29,7 @@ def create(parent):
 
 [wxID_HELP, wxID_HELPHTMLWINDOW1, wxID_HELPHTMLWINDOW2, wxID_HELPHTMLWINDOW3,
     wxID_HELPHTMLWINDOW4, wxID_HELPHTMLWINDOW5, wxID_HELPNOTEBOOK1,
- ] = [wx.NewId() for __init_ctrls in range(7)]
+ ] = [wx.NewIdRef() for __init_ctrls in range(7)]
 
 class Dialog(wx.Dialog):
     def __init_notebook_pages(self, parent):
@@ -51,7 +51,7 @@ class Dialog(wx.Dialog):
                            title=_(u"Help"))
         self.SetMinSize(wx.Size(350, 200))
         self.SetClientSize(wx.Size(600, 570))
-        self.SetFont(wx.Font(9, wx.DEFAULT, wx.NORMAL, wx.NORMAL))
+        self.SetFont(wx.Font(9, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL))
         self.SetIcon(wx.Icon(utils.icon_path(u'help.ico'), wx.BITMAP_TYPE_ICO))
 
         self.notebook1 = wx.Notebook(id=wxID_HELPNOTEBOOK1, name=u'notebook1',

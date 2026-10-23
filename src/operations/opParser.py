@@ -24,7 +24,7 @@ import re
 import sys
 import time
 
-from exif import EXIF
+import exifread as EXIF
 import app
 from mutagen.apev2 import APEv2File
 from mutagen.asf import ASF
@@ -43,7 +43,7 @@ from mutagen.oggvorbis import OggVorbis
 from mutagen.optimfrog import OptimFROG
 from mutagen.trueaudio import TrueAudio
 from mutagen.wavpack import WavPack
-import roman
+from . import roman
 import utils
 
 # Metadata tag translations
@@ -172,14 +172,14 @@ class Parser():
 
         # numerical counting:
         if numberStyle[0] == u'digit':
-            padChar = unicode(numberStyle[1])
+            padChar = str(numberStyle[1])
             # padding enabled and non-empty pad charcter:
             if numberStyle[3] and padChar:
                 if numberStyle[2] == u'auto':
-                    padWidth = len(unicode(maxNumb))
-                    y = unicode(i).rjust(padWidth, padChar)
+                    padWidth = len(str(maxNumb))
+                    y = str(i).rjust(padWidth, padChar)
                 else:
-                    y = unicode(i).rjust(int(numberStyle[2]), padChar)
+                    y = str(i).rjust(int(numberStyle[2]), padChar)
             # no padding:
             else:
                 y = i
@@ -227,7 +227,7 @@ class Parser():
                 self.auxCount = 0
         else:
             increment_reset_count()
-        return unicode(y)
+        return str(y)
 
 #--- DATE AND TIME -----------------------------------------------------------#
     def __get_exif_date(self, path, tag):
@@ -240,12 +240,12 @@ class Parser():
             else:
                 tags = EXIF.process_file(file, details=False, stop_tag=tag)
                 # see if the tag exists
-                if tags.has_key(tag):
+                if tag in tags:
                     try:
                         itemDateTime = str(tags[tag])
                         itemDateTime = re.compile(r'\D').split(itemDateTime)
                         itemDateTime = map(int, itemDateTime)
-                    except ValueError, err:
+                    except ValueError as err:
                         self.__add_to_warnings(path, _(u"Exif error: %s") % err)
                         return False
 
@@ -255,7 +255,7 @@ class Parser():
                                                    itemDateTime[1],
                                                    itemDateTime[2])
                     # invalid date
-                    except ValueError, err:
+                    except ValueError as err:
                         self.__add_to_warnings(path, _(u"Exif error: %s") % err)
                     else:
                         itemDateTime.extend([dayWeek, 1, 0])
@@ -301,16 +301,8 @@ class Parser():
     def __get_image_tag(self, path, EXIFtags, command):
         tag = IMAGE_INFO[command]
 
-        if EXIFtags.has_key(tag):
-            '''
-            if tag == u'EXIF DateTimeOriginal':
-                print self.__get_exif_date(path, tag)
-                itemDateTime = self.__get_exif_date(path, tag)
-            elif tag == u'Image DateTime':
-                itemDateTime = self.__get_exif_date(path, tag)
-            else:
-            '''
-            return unicode(EXIFtags[tag])
+        if tag in EXIFtags:
+            return str(EXIFtags[tag])
         else:
             self.__add_to_warnings(path, _(u"Could not read Exif tag"))
 
@@ -335,7 +327,7 @@ class Parser():
             return None
 
         try:
-            fileobj = file(filename, "rb")
+            fileobj = open(filename, "rb")
         except IOError:
             self.__add_to_errors(filename, _(u"Could not open file!"))
             return None
@@ -349,7 +341,7 @@ class Parser():
                 for Kind in options]
         finally:
             fileobj.close()
-        results = zip(results, options)
+        results = list(zip(results, options))
         results.sort()
         (score, name), Kind = results[-1]
         if score > 0:
@@ -369,7 +361,7 @@ class Parser():
     def __get_audio_tag(self, audioMetadata, command):
         tag = AUDIO_INFO[command]
         path = audioMetadata.filename
-        if audioMetadata.has_key(tag):
+        if tag in audioMetadata:
             value = audioMetadata[tag][0]
             encoding = app.prefs.get('encodingSelect')
             if str(encoding) != str(locale.getlocale()[1]):

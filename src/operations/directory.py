@@ -14,9 +14,9 @@
 
 import os.path
 
-import directoryTools
-from notebook import Notebook
-from operation import Operation
+from . import directoryTools
+from .notebook import Notebook
+from .operation import Operation
 import utils
 import wx
 

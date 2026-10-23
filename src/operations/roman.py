@@ -52,9 +52,9 @@ toRomanTable = [None]  # Skip an index since Roman numerals have no zero
 def toRoman(n):
     """convert integer to Roman numeral"""
     if not (0 < n <= MAX_ROMAN_NUMERAL):
-        raise OutOfRangeError, _("out of range")
-    if int(n) <> n:
-        raise NotIntegerError, _("non-integer")
+        raise OutOfRangeError(_("out of range"))
+    if int(n) != n:
+        raise NotIntegerError(_("non-integer"))
     return toRomanTable[n]
 
 #def fromRoman(s):
