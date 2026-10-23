@@ -150,14 +150,14 @@ class ItemList(wx.ListCtrl):
 
     def __on_key_down(self, event):
         """Need to know if shift is pressed to adjust selection."""
-        if event.m_keyCode == wx.WXK_SHIFT:
+        if event.GetKeyCode() == wx.WXK_SHIFT:
             self.shiftDown = True
         else:
             self.shiftDown = False
 
     def __on_key_up(self, event):
         self.shiftDown = False
-        if event.m_keyCode == wx.WXK_SHIFT:
+        if event.GetKeyCode() == wx.WXK_SHIFT:
             self.totalSelected = 0
             self.pickerPanel.enable_buttons()
             main.show_preview(True)
@@ -172,7 +172,7 @@ class ItemList(wx.ListCtrl):
 
     def on_item_selected(self, event):
         """show selected items then add or remove from renaming list."""
-        currentItem = event.m_itemIndex
+        currentItem = event.GetIndex()
         item = wx.ListItem()
         item.SetId(currentItem)
         fullItem = self.get_item_info(currentItem)
@@ -252,14 +252,14 @@ class ItemList(wx.ListCtrl):
 
     """
     def OnItemActivated(self, event):
-        self.currentItem = event.m_itemIndex
+        self.currentItem = event.GetIndex()
         self.log.WriteText("OnItemActivated: %s\nTopItem: %s\n" %
                            (self.GetItemText(self.currentItem), self.GetTopItem()))
 
 
     def OnItemDeselected(self, evt):
-        print(self.items[evt.m_itemIndex])
-        #print "OnItemDeselected: %s" % evt.m_itemIndex
+        print(self.items[evt.GetIndex()])
+        #print "OnItemDeselected: %s" % evt.GetIndex()
 
     #---------------------------------------------------
     # These methods are callbacks for implementing the

@@ -165,7 +165,7 @@ class Panel(wx.Panel):
         main.notebook.SetPageText(3, _(u"Errors/Warnings: 0"))
 
     def on_activate_error(self, event):
-        currentItem = event.m_itemIndex
+        currentItem = event.GetIndex()
         item_numb = self.errorsList.GetItemData(currentItem)
         main.bottomWindow.display.EnsureVisible(item_numb)
 

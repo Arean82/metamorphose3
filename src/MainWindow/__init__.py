@@ -887,7 +887,7 @@ class MainWindow(wx.Frame):
 
     def on_item_selected(self, event):
         """Set the selected item."""
-        self.currentItem = event.m_itemIndex
+        self.currentItem = event.GetIndex()
 
     def change_item_order(self, change):
         """Move the selected item."""
