@@ -25,10 +25,10 @@ import wx.adv
 def create(parent):
     return About(parent)
 
-[wxID_ABOUT, wxID_ABOUTCLOSE, wxID_ABOUTCOPYRIGHT, wxID_PANELDONATEBUTTON,
-    wxID_ABOUTGREET, wxID_ABOUTVERSION, wxID_ABOUTLINK, wxID_ABOUTDONATE,
+[wxID_ABOUT, wxID_ABOUTCLOSE, wxID_ABOUTCOPYRIGHT,
+    wxID_ABOUTGREET, wxID_ABOUTVERSION, wxID_ABOUTLINK,
     wxID_ABOUTWXVERSION, wxID_PANELCREDITSBUTTON, wxID_PANELLICENSEBUTTON
- ] = [wx.NewIdRef() for __init_ctrls in range(11)]
+ ] = [wx.NewIdRef() for __init_ctrls in range(9)]
 
 
 class About(wx.Dialog):
@@ -56,7 +56,6 @@ class About(wx.Dialog):
         mainSizer.Add(self.copyright, 0, wx.ALIGN_CENTER | wx.RIGHT | wx.LEFT, 7)
         mainSizer.Add(self.version, 0, wx.ALIGN_CENTER | wx.ALL, 2)
         mainSizer.Add(self.wxVersion, 0, wx.ALIGN_CENTER | wx.BOTTOM | wx.LEFT | wx.RIGHT, 8)
-        mainSizer.Add(self.donateButton, 0, wx.ALIGN_CENTER | wx.BOTTOM | wx.TOP, 15)
         mainSizer.Add(self.link, 0, wx.ALIGN_CENTER | wx.BOTTOM, 15)
         mainSizer.Add(bottomRow, 0, wx.ALIGN_CENTER | wx.BOTTOM, 15)
         mainSizer.Add(buttonsRow, 0, wx.ALIGN_CENTER | wx.BOTTOM, 15)
@@ -112,17 +111,6 @@ class About(wx.Dialog):
                                               url=u'https://github.com/Arean82/metamorphose3')
         self.bugReport.Show(True)
 
-        self.donateButton = wx.Button(id=wxID_PANELDONATEBUTTON,
-                                      label=_(u"Donate"), name=u'donateButton', parent=self)
-        self.donateButton.SetFont(wx.Font(fontSize + 4, fontFamily, fontStyle, wx.FONTWEIGHT_BOLD, False,
-                                          u'Times New Roman'))
-        self.donateButton.Bind(wx.EVT_BUTTON, self.on_donate_button,
-                               id=wxID_PANELDONATEBUTTON)
-
-        self.donate = wx.adv.HyperlinkCtrl(self, wxID_ABOUTDONATE, _(u"Donate"),
-                                           url=u'http://sourceforge.net/donate/index.php?group_id=146403')
-        self.donate.Show(False)
-
         self.licenseButton = wx.Button(id=wxID_PANELLICENSEBUTTON,
                                        label=_(u"License"), name=u'licenseButton', parent=self)
         self.licenseButton.Bind(wx.EVT_BUTTON, self.show_small_help,id=wxID_PANELLICENSEBUTTON)
@@ -150,6 +138,3 @@ class About(wx.Dialog):
             icon = u'examples'
             size = False
         return classes.SmallHelp(self, helpFile, title, icon, size).ShowModal()
-
-    def on_donate_button(self, event):
-        self.donate.GotoURL("http://sourceforge.net/donate/index.php?group_id=146403")
