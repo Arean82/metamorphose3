@@ -54,6 +54,7 @@ Requirements
 - wxPython 4.2 or greater (Phoenix)
 - Pillow 9.0 or greater
 - exifread 3.0 or greater
+- mutagen 1.45 or greater
 
 
 Running
