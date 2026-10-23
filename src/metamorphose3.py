@@ -44,7 +44,7 @@ def usage():
     """
     print()
     print("Metamorphose %s" % app.version)
-    print("Copyright (C) 2006-2015 ianare sevi")
+    print("Copyright (C) 2006-2015 Ianaré Sévi, 2026 Arean")
     print("<https://github.com/Arean82/metamorphose3>\n")
     print("Metamorphose is a graphical mass renaming program for files and folders.")
     print("There is support for automating GUI tasks via command line.\n")

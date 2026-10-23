@@ -88,7 +88,7 @@ class About(wx.Dialog):
         self.CLOSE.Bind(wx.EVT_BUTTON, self.on_close_button, id=wxID_ABOUTCLOSE)
 
         self.copyright = wx.StaticText(id=wxID_ABOUTCOPYRIGHT,
-                                       label=u"Copyright © 2006-2015 Ianaré Sévi", name=u'copyright',
+                                       label=u"Copyright © 2006-2015 Ianaré Sévi, 2026 Arean", name=u'copyright',
                                        parent=self)
         self.copyright.SetFont(wx.Font(fontSize + 2, fontFamily, fontStyle, wx.FONTWEIGHT_BOLD, False))
 

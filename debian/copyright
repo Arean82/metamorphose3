@@ -4,15 +4,17 @@ This package was debianized by:
 
 It was downloaded from:
 
-    http://file-folder-ren.sourceforge.net/
+    https://github.com/Arean82/metamorphose3
 
 Upstream Author(s):
 
-    ianaré sévi <ianare@gmail.com>
+    Ianaré Sévi <ianare@gmail.com>
+    Arean <arean@synorastudio.in>
 
 Copyright:
 
-    Copyright (C) 2006-2009 ianaré sévi
+    Copyright (C) 2006-2015 Ianaré Sévi
+    Copyright (C) 2026 Arean
 
 License:
 
@@ -41,7 +43,8 @@ Public License can be found in `/usr/share/common-licenses/GPL'.
 
 The Debian packaging is:
 
-    Copyright C) 2009, ianaré sévi <ianare@gmail.com>
+    Copyright (C) 2009 Ianaré Sévi <ianare@gmail.com>
+    Copyright (C) 2026 Arean <arean@synorastudio.in>
 
 and is licensed under the GPLv3, see above.
 
